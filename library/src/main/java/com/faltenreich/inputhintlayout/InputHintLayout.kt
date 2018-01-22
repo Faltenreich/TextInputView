@@ -2,9 +2,7 @@ package com.faltenreich.inputhintlayout
 
 import android.animation.LayoutTransition
 import android.animation.ValueAnimator
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -19,24 +17,15 @@ import android.widget.TextView
  * Created by Faltenreich on 21.01.2018
  */
 
-private const val animationDuration = 500L
+private const val ANIMATION_DURATION_DEFAULT = 500
 
-class InputHintLayout : FrameLayout {
+class InputHintLayout @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    @JvmOverloads
-    constructor(
-            context: Context,
-            attrs: AttributeSet? = null,
-            defStyleAttr: Int = 0
-    ) : super(context, attrs, defStyleAttr)
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(
-            context: Context,
-            attrs: AttributeSet? = null,
-            defStyleAttr: Int = 0,
-            defStyleRes: Int = 0
-    ) : super(context, attrs, defStyleAttr, defStyleRes)
+    private var animationDuration = ANIMATION_DURATION_DEFAULT
 
     private val editText: EditText by lazy { views.first { it is EditText } as EditText }
 
@@ -50,7 +39,11 @@ class InputHintLayout : FrameLayout {
     }
 
     init {
-        readAttributes()
+        attrs?.let {
+            val typedArray = context.obtainStyledAttributes(it, R.styleable.InputHintLayout, 0, 0)
+            animationDuration = typedArray.getInt(R.styleable.InputHintLayout_animationDuration, animationDuration)
+            typedArray.recycle()
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -83,10 +76,11 @@ class InputHintLayout : FrameLayout {
         val showHint = editText.text.isNotEmpty()
         hintView.visibility = if (showHint) View.VISIBLE else View.INVISIBLE
 
+        // TODO: Prevent animating twice
         if (animated) {
             val width = if (showHint) width - hintView.width else width
             val animator = ValueAnimator.ofInt(editText.width, width)
-            animator.duration = animationDuration
+            animator.duration = animationDuration.toLong()
             animator.addUpdateListener {
                 editText.layoutParams.width = it.animatedValue as Int
                 editText.requestLayout()
