@@ -3,8 +3,10 @@
 <resources>
 
     <declare-styleable name="InputHintLayout">
-        <attr name="animationDuration" format="integer"/>
-        <attr name="hintColor" format="integer"/>
+        <attr name="animationDurationMillis" format="integer"/>
+        <attr name="hintPadding" format="dimension"/>
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
     </declare-styleable>
 
 </resources>

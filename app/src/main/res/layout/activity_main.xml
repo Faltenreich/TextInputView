@@ -3,16 +3,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.faltenreich.inputhintlayout.InputHintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        app:hintPadding="16dp"
+        app:animationDurationMillis="500">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/app_name"/>
+            android:hint="@string/app_name"
+            android:textColorHint="@color/colorPrimary"/>
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
 
