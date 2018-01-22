@@ -1,7 +1,5 @@
 package com.faltenreich.inputhintlayout
 
-import android.animation.LayoutTransition
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.text.Editable
@@ -19,7 +17,7 @@ import android.widget.FrameLayout
  * Created by Faltenreich on 21.01.2018
  */
 
-private const val ANIMATION_DURATION_DEFAULT = 500
+private const val ANIMATION_DURATION_DEFAULT = 500L
 
 @Suppress("MemberVisibilityCanBePrivate")
 class InputHintLayout @JvmOverloads constructor(
@@ -28,12 +26,12 @@ class InputHintLayout @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private var customAnimationDuration: Int = 0
+    private var customAnimationDuration: Long = 0
     private var customTextSize: Float = 0f
     private var customTextColorNormal: Int = 0
     private var customTextColorSelected: Int = 0
 
-    var animationDurationMillis: Int = ANIMATION_DURATION_DEFAULT
+    var animationDurationMillis: Long = ANIMATION_DURATION_DEFAULT
 
     var textSize: Float
         get() = hintView.textSize
@@ -44,7 +42,9 @@ class InputHintLayout @JvmOverloads constructor(
 
     var textColor: Int
         get() = hintView.textColors.defaultColor
-        set(value) { hintView.setTextColor(value) }
+        set(value) {
+            hintView.setTextColor(value, ANIMATION_DURATION_DEFAULT)
+        }
 
     private val editText: EditText by lazy { views.first { it is EditText } as EditText }
 
@@ -60,7 +60,7 @@ class InputHintLayout @JvmOverloads constructor(
     init {
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.InputHintLayout, 0, 0)
-            customAnimationDuration = typedArray.getInt(R.styleable.InputHintLayout_animationDurationMillis, 0)
+            customAnimationDuration = typedArray.getInt(R.styleable.InputHintLayout_animationDurationMillis, 0).toLong()
             customTextSize = typedArray.getFloat(R.styleable.InputHintLayout_android_textSize, 0f)
             customTextColorNormal = typedArray.getColorStateList(R.styleable.InputHintLayout_android_textColor)?.defaultColor ?: 0
             customTextColorSelected = typedArray.getColorStateList(R.styleable.InputHintLayout_android_tint)?.defaultColor ?: 0
@@ -87,8 +87,6 @@ class InputHintLayout @JvmOverloads constructor(
         // TODO: Transition
 
         if (!isInEditMode) {
-            layoutTransition = LayoutTransition()
-
             editText.addTextChangedListener(object: TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -99,25 +97,14 @@ class InputHintLayout @JvmOverloads constructor(
                 textColor = if (hasFocus) textColorSelected else textColorNormal
             }
 
-            invalidateHint(false)
+            hintView.alpha = 0f
+            invalidateHint()
         }
     }
 
-    private fun invalidateHint(animated: Boolean = true) {
+    private fun invalidateHint() {
         val showHint = editText.text.isNotEmpty()
-        hintView.visibility = if (showHint) View.VISIBLE else View.INVISIBLE
-
-        // TODO: Prevent animating twice
-        if (false) {
-            val width = if (showHint) width - hintView.width else width
-            val animator = ValueAnimator.ofInt(editText.width, width)
-            animator.duration = animationDurationMillis.toLong()
-            animator.addUpdateListener {
-                editText.layoutParams.width = it.animatedValue as Int
-                editText.requestLayout()
-            }
-            animator.start()
-        }
+        hintView.alphaAnimation(showHint, animationDurationMillis)
     }
 
     private val ViewGroup.views: List<View>
