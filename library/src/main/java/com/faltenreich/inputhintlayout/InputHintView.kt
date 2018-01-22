@@ -14,4 +14,8 @@ internal class InputHintView(
         defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
 
+    init {
+        isFocusable = true
+        isFocusableInTouchMode = true
+    }
 }

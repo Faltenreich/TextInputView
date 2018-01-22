@@ -10,15 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorAccent"
-        app:hintPadding="16dp"
         app:animationDurationMillis="500">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/app_name"
-            android:textColorHint="@color/colorPrimary"/>
+            android:hint="@string/app_name"/>
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/app_name"/>
 
 </LinearLayout>

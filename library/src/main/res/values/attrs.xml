@@ -7,6 +7,7 @@
         <attr name="hintPadding" format="dimension"/>
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
+        <attr name="android:tint"/>
     </declare-styleable>
 
 </resources>
