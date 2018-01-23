@@ -5,7 +5,6 @@
     <declare-styleable name="InputHintLayout">
         <attr name="animationDurationMillis" format="integer"/>
         <attr name="hintPadding" format="dimension"/>
-        <attr name="android:gravity"/>
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
         <attr name="android:tint"/>
