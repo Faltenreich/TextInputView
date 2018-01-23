@@ -117,13 +117,17 @@ class InputHintLayout @JvmOverloads constructor(
         textColor = if (editText.hasFocus()) textColorSelected else textColorNormal
 
         val showHint = editText.text.isNotEmpty()
+        // FIXME: Prevent re-starting animation
         hintView.alphaAnimation(showHint, animationDurationMillis, interpolator)
 
+        // Ensure correct line count on shrinking text
+        editText.setLines(editText.lineCount)
+
+        // Regard line break to prevent overlapping hint
         val currentLineWidth = editText.getTextWidth(editText.lineCount - 1)
         val exceededLineWidth = currentLineWidth > maxLineWidth
         if (exceededLineWidth) {
             // TODO: Regard maxLines
-            // FIXME: setLines() on exceeding line
             editText.setLines(editText.lineCount + 1)
         }
     }
