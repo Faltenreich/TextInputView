@@ -27,11 +27,16 @@ class InputHintLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private var customAnimationDuration: Long = 0
+    private var customGravity: Int = 0
     private var customTextSize: Float = 0f
     private var customTextColorNormal: Int = 0
     private var customTextColorSelected: Int = 0
 
     var animationDurationMillis: Long = ANIMATION_DURATION_DEFAULT
+
+    var gravity: Int
+        get() = (hintView.layoutParams as FrameLayout.LayoutParams).gravity
+        set(value) { hintView.layoutGravity(value) }
 
     var textSize: Float
         get() = hintView.textSize
@@ -51,7 +56,6 @@ class InputHintLayout @JvmOverloads constructor(
     private val hintView: InputHintView by lazy {
         val hintView = InputHintView(context)
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        layoutParams.gravity = Gravity.TOP or Gravity.END
         hintView.layoutParams = layoutParams
         addView(hintView)
         hintView
@@ -61,6 +65,7 @@ class InputHintLayout @JvmOverloads constructor(
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.InputHintLayout, 0, 0)
             customAnimationDuration = typedArray.getInt(R.styleable.InputHintLayout_animationDurationMillis, 0).toLong()
+            customGravity = typedArray.getInt(R.styleable.InputHintLayout_android_gravity, 0)
             customTextSize = typedArray.getFloat(R.styleable.InputHintLayout_android_textSize, 0f)
             customTextColorNormal = typedArray.getColorStateList(R.styleable.InputHintLayout_android_textColor)?.defaultColor ?: 0
             customTextColorSelected = typedArray.getColorStateList(R.styleable.InputHintLayout_android_tint)?.defaultColor ?: 0
@@ -78,12 +83,12 @@ class InputHintLayout @JvmOverloads constructor(
         hintView.text = editText.hint
 
         animationDurationMillis = if (customAnimationDuration > 0) customAnimationDuration else ANIMATION_DURATION_DEFAULT
+        gravity = if (customGravity > 0) customGravity else Gravity.END
         textSize = if (customTextSize > 0) customTextSize else editText.textSize
         textColorNormal = if (customTextColorNormal > 0) customTextColorNormal else editText.hintTextColors.defaultColor
         textColorSelected = if (customTextColorSelected > 0) customTextColorSelected else context.accentColor()
 
         // TODO: Multiline Gravity
-        // TODO: Rtl
         // TODO: Transition
 
         if (!isInEditMode) {

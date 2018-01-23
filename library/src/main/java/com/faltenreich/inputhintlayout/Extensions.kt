@@ -6,6 +6,8 @@ import android.content.Context
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 
 /**
@@ -36,4 +38,11 @@ fun View.alphaAnimation(fadeIn: Boolean, durationMillis: Long) {
     } else {
         alpha = target
     }
+}
+
+fun View.layoutGravity(gravity: Int) {
+    val newParams = layoutParams
+    (newParams as? FrameLayout.LayoutParams)?.gravity = gravity
+    (newParams as? LinearLayout.LayoutParams)?.gravity = gravity
+    layoutParams = newParams
 }

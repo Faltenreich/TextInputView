@@ -10,6 +10,7 @@
     <com.faltenreich.inputhintlayout.InputHintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="end"
         android:textColor="@color/colorAccent"
         app:animationDurationMillis="500">
 
