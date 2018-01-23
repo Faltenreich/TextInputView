@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
+import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,18 +24,23 @@ fun Context.accentColor(): Int {
     return outValue.data
 }
 
-fun TextView.setTextColor(colorTo: Int, durationMillis: Long) {
-    val colorFrom = textColors.defaultColor
-    val animation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
-    animation.duration = durationMillis
-    animation.addUpdateListener { animator -> setTextColor(animator.animatedValue as Int) }
-    animation.start()
+fun TextView.setTextColor(colorTo: Int, durationMillis: Long, interpolator: Interpolator) {
+    if (durationMillis > 0) {
+        val colorFrom = textColors.defaultColor
+        val animation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
+        animation.duration = durationMillis
+        animation.interpolator = interpolator
+        animation.addUpdateListener { animator -> setTextColor(animator.animatedValue as Int) }
+        animation.start()
+    } else {
+        setTextColor(colorTo)
+    }
 }
 
-fun View.alphaAnimation(fadeIn: Boolean, durationMillis: Long) {
+fun View.alphaAnimation(fadeIn: Boolean, durationMillis: Long, interpolator: Interpolator) {
     val target = if (fadeIn) 1f else 0f
     if (durationMillis > 0 && target != alpha) {
-        animate().alpha(target).setDuration(durationMillis).start()
+        animate().alpha(target).setDuration(durationMillis).setInterpolator(interpolator).start()
     } else {
         alpha = target
     }

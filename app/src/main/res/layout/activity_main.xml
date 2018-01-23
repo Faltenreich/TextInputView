@@ -2,17 +2,13 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <com.faltenreich.inputhintlayout.InputHintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:textColor="@color/colorAccent"
-        app:animationDurationMillis="500">
+        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="match_parent"
@@ -21,9 +17,15 @@
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
 
-    <EditText
+    <com.faltenreich.inputhintlayout.InputHintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/app_name"/>
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/app_name"/>
+
+    </com.faltenreich.inputhintlayout.InputHintLayout>
 
 </LinearLayout>
