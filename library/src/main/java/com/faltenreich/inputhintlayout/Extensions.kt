@@ -4,8 +4,10 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -16,6 +18,8 @@ import android.widget.TextView
  * Created by Faltenreich on 22.01.2018
  */
 
+fun Any.tag() = javaClass.simpleName
+
 fun Context.accentColor(): Int {
     val attr =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) android.R.attr.colorAccent
@@ -24,6 +28,8 @@ fun Context.accentColor(): Int {
     theme.resolveAttribute(attr, outValue, true)
     return outValue.data
 }
+
+fun ViewGroup.views(): List<View> = (0 until childCount).map { getChildAt(it) }
 
 fun TextView.setTextColor(colorTo: Int, durationMillis: Long, interpolator: Interpolator) {
     if (durationMillis > 0) {
@@ -68,3 +74,45 @@ fun EditText.getTextForLine(line: Int): String? =
             val isInBounds = start < end && start < lineCharacters && end <= lineCharacters
             if (isInBounds) input?.substring(start, end) else null
         }
+
+fun EditText.getTextWidth(range: IntRange): Float {
+    val input = getTextForRange(range)
+    return input?.let { paint.measureText(input) } ?: 0f
+}
+
+fun EditText.getTextForRange(range: IntRange): String? =
+        layout?.let {
+            val input = text?.toString()
+            val lineCharacters = input?.length ?: 0
+            val start = range.start
+            val end = range.endInclusive
+            val isInBounds = start < end && start < lineCharacters && end <= lineCharacters
+            if (isInBounds) input?.substring(start, end) else null
+        }
+
+fun EditText.getMaxLineCountCompat(): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) maxLines else getMaxLineCountPreApi16()
+}
+
+fun EditText.getMaxLineCountPreApi16(): Int {
+    try {
+        val maximumField = text.javaClass.getDeclaredField("mMaximum")
+        val maxModeField = text.javaClass.getDeclaredField("mMaxMode")
+
+        maximumField?.isAccessible = true
+        maxModeField?.isAccessible = true
+
+        val maximum = maximumField?.getInt(text)
+        val maxMode = maxModeField?.getInt(text)
+
+        return if (maxMode == 1) 1 else maximum ?: 1
+
+    } catch (exception: NoSuchFieldException) {
+        Log.e(tag(), exception.message)
+    } catch (exception: IllegalArgumentException) {
+        Log.e(tag(), exception.message)
+    } catch (exception: IllegalAccessException) {
+        Log.e(tag(), exception.message)
+    }
+    return 1
+}

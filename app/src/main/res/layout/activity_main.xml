@@ -13,7 +13,9 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/app_name"/>
+            android:maxLines="5"
+            android:inputType="textMultiLine"
+            android:hint="Multi line"/>
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
 
@@ -24,7 +26,10 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/app_name"/>
+            android:inputType="text"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:hint="Single line"/>
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
 
