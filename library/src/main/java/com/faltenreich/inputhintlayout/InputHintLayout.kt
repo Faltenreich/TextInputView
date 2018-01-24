@@ -15,6 +15,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.TextView
 
 /**
  * Created by Faltenreich on 21.01.2018
@@ -45,13 +46,14 @@ class InputHintLayout @JvmOverloads constructor(
 
     private var maxLineCount: Int = 1
 
-    private val editText: EditText by lazy { views().first { it is EditText } as EditText }
+    private val editText: EditText by lazy { onAttachEditText() }
 
-    private val hintView: InputHintView by lazy {
-        val hintView = InputHintView(context)
-        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        hintView.layoutParams = layoutParams
+    private val hintView: TextView by lazy {
+        val hintView = onCreateHintView()
         addView(hintView)
+        hintView.setPadding(editText.paddingLeft, editText.paddingTop, editText.paddingRight, editText.paddingBottom)
+        hintView.setLayoutGravity(Gravity.BOTTOM or Gravity.END) // TODO: Rtl
+        hintView.text = editText.hint
         hintView
     }
 
@@ -101,10 +103,6 @@ class InputHintLayout @JvmOverloads constructor(
     private fun initLayout() {
         editText.gravity = Gravity.TOP
         maxLineCount = editText.getMaxLineCountCompat()
-
-        hintView.setPadding(editText.paddingLeft, editText.paddingTop, editText.paddingRight, editText.paddingBottom)
-        hintView.setLayoutGravity(Gravity.BOTTOM or Gravity.END) // TODO: Rtl
-        hintView.text = editText.hint
 
         animationDurationMillis = if (customAnimationDuration >= 0) customAnimationDuration else ANIMATION_DURATION_DEFAULT
         textSize = if (customTextSize >= 0) customTextSize else editText.textSize
@@ -169,7 +167,7 @@ class InputHintLayout @JvmOverloads constructor(
     }
 
     private fun animateHintVisibility(animateIn: Boolean) {
-        val animator = if (animateIn) inAnimation(hintView) else outAnimation(hintView)
+        val animator = if (animateIn) onCreateInAnimation(hintView) else onCreateOutAnimation(hintView)
         animator.duration = animationDurationMillis
         animator.interpolator = interpolator
         animator.setListener(object: Animator.AnimatorListener {
@@ -196,7 +194,21 @@ class InputHintLayout @JvmOverloads constructor(
         animator.start()
     }
 
-    fun inAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
+    private fun onAttachEditText(): EditText =
+            try { views().first {
+                it is EditText } as EditText
+            } catch (exception: NoSuchElementException) {
+                throw Exception("${tag()} requires an EditText as first child")
+            }
 
-    fun outAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
+    fun onCreateHintView(): TextView {
+        val hintView = InputHintView(context)
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        hintView.layoutParams = layoutParams
+        return hintView
+    }
+
+    fun onCreateInAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
+
+    fun onCreateOutAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
 }
