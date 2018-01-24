@@ -120,9 +120,10 @@ class InputHintLayout @JvmOverloads constructor(
                     invalidateHintPosition()
 
                     val firstWord = start == 0
+                    val inBounds = text?.length ?: 0 <= 1
                     val emptied = count == 1 && after == 0
                     val unemptied = count == 0 && after == 1
-                    if (firstWord && (emptied || unemptied)) {
+                    if (firstWord && inBounds && (emptied || unemptied)) {
                         toggleHintVisibility(after == 1)
                     }
                 }
@@ -142,15 +143,18 @@ class InputHintLayout @JvmOverloads constructor(
 
     private fun invalidateHintPosition() {
         // Ensure correct line count on shrinking text
-        editText.setLines(editText.lineCount)
+        if (editText.lineCount <= maxLineCount) {
+            editText.setLines(editText.lineCount)
+        }
 
         val currentLineWidth = editText.getTextWidth(editText.lineCount - 1)
         val exceededLineWidth = currentLineWidth > maxLineWidth
         if (exceededLineWidth) {
-            if (editText.lineCount < maxLineCount) {
-                editText.setLines(editText.lineCount + 1)
-            } else {
+            val reachedEnd = editText.lineCount >= maxLineCount
+            if (reachedEnd) {
                 // TODO: Ellipsize early
+            } else {
+                editText.setLines(editText.lineCount + 1)
             }
         }
     }
