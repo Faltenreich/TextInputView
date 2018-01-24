@@ -109,8 +109,6 @@ class InputHintLayout @JvmOverloads constructor(
         textColorNormal = if (customTextColorNormal >= 0) customTextColorNormal else editText.hintTextColors.defaultColor
         textColorSelected = if (customTextColorSelected >= 0) customTextColorSelected else context.accentColor()
 
-        // TODO: Transition
-
         if (!isInEditMode) {
             editText.addTextChangedListener(object: TextWatcher {
                 override fun beforeTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -151,9 +149,12 @@ class InputHintLayout @JvmOverloads constructor(
             val reachedEnd = editText.lineCount >= maxLineCount
             if (reachedEnd) {
                 // TODO: Ellipsize early
+                hintView.visibility = View.INVISIBLE
             } else {
                 editText.setLines(editText.lineCount + 1)
             }
+        } else {
+            hintView.visibility = View.VISIBLE
         }
     }
 
@@ -166,8 +167,7 @@ class InputHintLayout @JvmOverloads constructor(
         }
     }
 
-    private fun animateHintVisibility(animateIn: Boolean) {
-        val animator = if (animateIn) onCreateInAnimation(hintView) else onCreateOutAnimation(hintView)
+    private fun animateHintVisibility(animateIn: Boolean, animator: ViewPropertyAnimator = if (animateIn) onCreateInAnimation(hintView) else onCreateOutAnimation(hintView)) {
         animator.duration = animationDurationMillis
         animator.interpolator = interpolator
         animator.setListener(object: Animator.AnimatorListener {
@@ -195,8 +195,8 @@ class InputHintLayout @JvmOverloads constructor(
     }
 
     private fun onAttachEditText(): EditText =
-            try { views().first {
-                it is EditText } as EditText
+            try {
+                views().first { it is EditText } as EditText
             } catch (exception: NoSuchElementException) {
                 throw Exception("${tag()} requires an EditText as first child")
             }
@@ -208,7 +208,11 @@ class InputHintLayout @JvmOverloads constructor(
         return hintView
     }
 
-    fun onCreateInAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
+    private fun onCreateInAlphaAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
 
-    fun onCreateOutAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
+    fun onCreateInAnimation(view: View): ViewPropertyAnimator = onCreateInAlphaAnimation(view)
+
+    private fun onCreateOutAlphaAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
+
+    fun onCreateOutAnimation(view: View): ViewPropertyAnimator = onCreateOutAlphaAnimation(view)
 }
