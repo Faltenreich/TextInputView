@@ -2,6 +2,7 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -21,7 +22,8 @@
 
     <com.faltenreich.inputhintlayout.InputHintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:overlapAnimation="push">
 
         <EditText
             android:layout_width="match_parent"
@@ -32,5 +34,13 @@
             android:hint="Single line"/>
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:hint="EditText"/>
 
 </LinearLayout>

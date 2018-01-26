@@ -3,6 +3,11 @@
 <resources>
 
     <declare-styleable name="InputHintLayout">
+        <attr name="overlapAnimation" format="enum">
+            <enum value="0" name="toggle"/>
+            <enum value="1" name="fade"/>
+            <enum value="2" name="push"/>
+        </attr>
         <attr name="animationDurationMillis" format="integer"/>
         <attr name="hintPadding" format="dimension"/>
         <attr name="android:textSize"/>
