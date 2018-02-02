@@ -191,7 +191,7 @@ class InputHintLayout @JvmOverloads constructor(
         }
     }
 
-    fun onInputTextChangedOutOfBounds(offset: Float) {
+    private fun onInputTextChangedOutOfBounds(offset: Float) {
         when (overlapAnimation) {
             OVERLAP_ANIMATION_TOGGLE -> hintView.visibility = View.INVISIBLE
             OVERLAP_ANIMATION_FADE -> hintView.visibility = View.INVISIBLE // TODO
@@ -199,7 +199,7 @@ class InputHintLayout @JvmOverloads constructor(
         }
     }
 
-    fun onInputTextChangedInBounds() {
+    private fun onInputTextChangedInBounds() {
         when (overlapAnimation) {
             OVERLAP_ANIMATION_TOGGLE -> hintView.visibility = View.VISIBLE
             OVERLAP_ANIMATION_FADE -> hintView.visibility = View.VISIBLE // TODO

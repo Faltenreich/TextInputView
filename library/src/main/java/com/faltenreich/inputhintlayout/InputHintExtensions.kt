@@ -18,9 +18,9 @@ import android.widget.TextView
  * Created by Faltenreich on 22.01.2018
  */
 
-fun Any.tag(): String = javaClass.simpleName
+internal fun Any.tag(): String = javaClass.simpleName
 
-fun Context.accentColor(): Int {
+internal fun Context.accentColor(): Int {
     val attr =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) android.R.attr.colorAccent
             else resources.getIdentifier("colorAccent", "attr", packageName)
@@ -29,9 +29,9 @@ fun Context.accentColor(): Int {
     return outValue.data
 }
 
-fun ViewGroup.views(): List<View> = (0 until childCount).map { getChildAt(it) }
+internal fun ViewGroup.views(): List<View> = (0 until childCount).map { getChildAt(it) }
 
-fun TextView.setTextColor(colorTo: Int, durationMillis: Long, interpolator: Interpolator) {
+internal fun TextView.setTextColor(colorTo: Int, durationMillis: Long, interpolator: Interpolator) {
     if (durationMillis > 0) {
         val colorFrom = textColors.defaultColor
         val animation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
@@ -44,19 +44,19 @@ fun TextView.setTextColor(colorTo: Int, durationMillis: Long, interpolator: Inte
     }
 }
 
-fun View.setLayoutGravity(gravity: Int) {
+internal fun View.setLayoutGravity(gravity: Int) {
     val newParams = layoutParams
     (newParams as? FrameLayout.LayoutParams)?.gravity = gravity
     (newParams as? LinearLayout.LayoutParams)?.gravity = gravity
     layoutParams = newParams
 }
 
-fun EditText.getTextWidth(line: Int = -1): Float {
+internal fun EditText.getTextWidth(line: Int = -1): Float {
     val input = if (line >= 0) getTextForLine(line) else text?.toString()
     return input?.let { paint.measureText(input) } ?: 0f
 }
 
-fun EditText.getTextForLine(line: Int): String? =
+internal fun EditText.getTextForLine(line: Int): String? =
         layout?.let {
             val input = text?.toString()
             val lineCharacters = input?.length ?: 0
@@ -66,10 +66,10 @@ fun EditText.getTextForLine(line: Int): String? =
             if (isInBounds) input?.substring(start, end) else null
         }
 
-fun EditText.getMaxLineCountCompat(): Int =
+internal fun EditText.getMaxLineCountCompat(): Int =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) maxLines else getMaxLineCountPreApi16()
 
-fun EditText.getMaxLineCountPreApi16(): Int =
+internal fun EditText.getMaxLineCountPreApi16(): Int =
         try {
             val maximumField = text.javaClass.getDeclaredField("mMaximum")
             val maxModeField = text.javaClass.getDeclaredField("mMaxMode")
@@ -83,7 +83,7 @@ fun EditText.getMaxLineCountPreApi16(): Int =
             1
         }
 
-fun View.setOffsetStart(offset: Float) {
+internal fun View.setOffsetStart(offset: Float) {
     val newParams = layoutParams
     val margin = (-offset).toInt()
     (newParams as? ViewGroup.MarginLayoutParams?)?.let {
