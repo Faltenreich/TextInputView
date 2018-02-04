@@ -11,7 +11,6 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -29,8 +28,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
-    androidTestImplementation ('com.android.support.test.espresso:espresso-core:3.0.1') { exclude group: 'com.android.support', module: 'support-annotations' }
-
     implementation "com.android.support:appcompat-v7:$support_library_version"
+
     implementation project(":library")
 }
