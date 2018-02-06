@@ -21,16 +21,17 @@ import android.widget.TextView
  * Created by Faltenreich on 21.01.2018
  */
 
-const val OVERLAP_ANIMATION_TOGGLE = 0
-const val OVERLAP_ANIMATION_FADE = 1
-const val OVERLAP_ANIMATION_PUSH = 2
+const val ANIMATION_STYLE_TOGGLE = 0
+const val ANIMATION_STYLE_ANIMATE = 1
+const val ANIMATION_STYLE_PUSH = 2
 
-const val HIDE_ANIMATION_STATUS_IDLE = 0
-const val HIDE_ANIMATION_STATUS_ANIMATING_IN = 1
-const val HIDE_ANIMATION_STATUS_ANIMATION_OUT = 2
+private const val ANIMATION_STATUS_IDLE = 0
+private const val ANIMATION_STATUS_ANIMATING_IN = 1
+private const val ANIMATION_STATUS_ANIMATING_OUT = 2
 
 private const val ANIMATION_DURATION_DEFAULT = 300L
-private const val OVERLAP_ANIMATION_DEFAULT = OVERLAP_ANIMATION_TOGGLE
+private const val MOVE_ANIMATION_DEFAULT = ANIMATION_STYLE_ANIMATE
+private const val OVERLAP_ANIMATION_DEFAULT = ANIMATION_STYLE_TOGGLE
 
 @Suppress("MemberVisibilityCanBePrivate")
 class InputHintLayout @JvmOverloads constructor(
@@ -39,14 +40,15 @@ class InputHintLayout @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private var customMoveAnimation: Int = -1
     private var customOverlapAnimation: Int = -1
     private var customAnimationDuration: Long = -1
     private var customTextSize: Float = -1f
     private var customTextColorNormal: Int = -1
     private var customTextColorSelected: Int = -1
 
-    private var currentAnimationStatus = HIDE_ANIMATION_STATUS_IDLE
-    private var pendingAnimationStatus = HIDE_ANIMATION_STATUS_IDLE
+    private var currentAnimationStatus = ANIMATION_STATUS_IDLE
+    private var pendingAnimationStatus = ANIMATION_STATUS_IDLE
 
     private var maxLineCount: Int = 1
 
@@ -67,6 +69,8 @@ class InputHintLayout @JvmOverloads constructor(
     private var textColor: Int
         get() = hintView.textColors.defaultColor
         set(value) { hintView.setTextColor(value, animationDurationMillis, interpolator) }
+
+    var moveAnimation: Int = -1
 
     var overlapAnimation: Int = -1
 
@@ -94,6 +98,7 @@ class InputHintLayout @JvmOverloads constructor(
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.InputHintLayout, 0, 0)
 
+            customMoveAnimation = typedArray.getInt(R.styleable.InputHintLayout_moveAnimation, -1)
             customOverlapAnimation = typedArray.getInt(R.styleable.InputHintLayout_overlapAnimation, -1)
             customAnimationDuration = typedArray.getInt(R.styleable.InputHintLayout_animationDurationMillis, -1).toLong()
             customTextSize = typedArray.getFloat(R.styleable.InputHintLayout_android_textSize, -1f)
@@ -113,9 +118,14 @@ class InputHintLayout @JvmOverloads constructor(
             Log.d(tag(), "Gravity gets overwritten to Gravity.TOP in order to support multiline text")
         }
 
-        editText.gravity = Gravity.TOP
         maxLineCount = editText.getMaxLineCountCompat()
 
+        // Ensure input alignment on multiline
+        if (maxLineCount > 1) {
+            editText.gravity = Gravity.TOP
+        }
+
+        moveAnimation = if (customMoveAnimation >= 0) customMoveAnimation else MOVE_ANIMATION_DEFAULT
         overlapAnimation = if (customOverlapAnimation >= 0) customOverlapAnimation else OVERLAP_ANIMATION_DEFAULT
         animationDurationMillis = if (customAnimationDuration >= 0) customAnimationDuration else ANIMATION_DURATION_DEFAULT
         textSize = if (customTextSize >= 0) customTextSize else editText.textSize
@@ -125,6 +135,7 @@ class InputHintLayout @JvmOverloads constructor(
         if (!isInEditMode) {
             editText.addTextChangedListener(object: TextWatcher {
                 override fun beforeTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
+
                 override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
                     onInputTextChanged()
 
@@ -136,13 +147,13 @@ class InputHintLayout @JvmOverloads constructor(
                         onInputTextIsEmptyChanged(after == 1)
                     }
                 }
+
                 override fun afterTextChanged(editable: Editable?) {}
             })
 
             editText.onFocusChangeListener = OnFocusChangeListener { _, _ -> onInputFocusChanged() }
 
-            val showHint = editText.text.isNotEmpty()
-            hintView.alpha = if (showHint) 1f else 0f
+            hintView.alpha = if (editText.text.isNotEmpty()) 1f else 0f
         }
     }
 
@@ -153,20 +164,16 @@ class InputHintLayout @JvmOverloads constructor(
                 throw Exception("${tag()} requires an EditText as first child")
             }
 
-    fun onCreateHintView(): TextView {
+    private fun onCreateHintView(): TextView {
         val hintView = InputHintView(context)
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         hintView.layoutParams = layoutParams
         return hintView
     }
 
-    private fun onCreateInAlphaAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
+    fun onCreateInAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
 
-    fun onCreateInAnimation(view: View): ViewPropertyAnimator = onCreateInAlphaAnimation(view)
-
-    private fun onCreateOutAlphaAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
-
-    fun onCreateOutAnimation(view: View): ViewPropertyAnimator = onCreateOutAlphaAnimation(view)
+    fun onCreateOutAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
 
     private fun onInputFocusChanged() {
         textColor = if (editText.hasFocus()) textColorSelected else textColorNormal
@@ -184,62 +191,62 @@ class InputHintLayout @JvmOverloads constructor(
             if (editText.lineCount < maxLineCount) {
                 editText.setLines(editText.lineCount + 1)
             } else {
-                onInputTextChangedOutOfBounds(currentLineWidth - maxLineWidth)
+                onInputTextOffsetChanged(currentLineWidth - maxLineWidth)
             }
         } else {
-            onInputTextChangedInBounds()
+            onInputTextOffsetChanged(0f)
         }
     }
 
-    private fun onInputTextChangedOutOfBounds(offset: Float) {
+    private fun onInputTextOffsetChanged(offset: Float) {
+        val overlaps = offset > 0
         when (overlapAnimation) {
-            OVERLAP_ANIMATION_TOGGLE -> hintView.visibility = View.INVISIBLE
-            OVERLAP_ANIMATION_FADE -> hintView.visibility = View.INVISIBLE // TODO
-            OVERLAP_ANIMATION_PUSH -> hintView.setOffsetStart(offset)
-        }
-    }
-
-    private fun onInputTextChangedInBounds() {
-        when (overlapAnimation) {
-            OVERLAP_ANIMATION_TOGGLE -> hintView.visibility = View.VISIBLE
-            OVERLAP_ANIMATION_FADE -> hintView.visibility = View.VISIBLE // TODO
-            OVERLAP_ANIMATION_PUSH -> hintView.setOffsetStart(0f)
+            ANIMATION_STYLE_TOGGLE -> hintView.visibility = if (overlaps) View.INVISIBLE else View.VISIBLE
+            ANIMATION_STYLE_ANIMATE -> onInputAnimateWhenReady(!overlaps)
+            ANIMATION_STYLE_PUSH -> hintView.setOffsetStart(offset)
         }
     }
 
     private fun onInputTextIsEmptyChanged(isVisible: Boolean) {
-        pendingAnimationStatus = HIDE_ANIMATION_STATUS_IDLE
-        when (currentAnimationStatus) {
-            HIDE_ANIMATION_STATUS_IDLE -> onInputVisibilityChange(isVisible)
-            HIDE_ANIMATION_STATUS_ANIMATING_IN -> if (!isVisible) pendingAnimationStatus = HIDE_ANIMATION_STATUS_ANIMATION_OUT
-            HIDE_ANIMATION_STATUS_ANIMATION_OUT -> { if (isVisible) pendingAnimationStatus = HIDE_ANIMATION_STATUS_ANIMATING_IN }
+        when (moveAnimation) {
+            ANIMATION_STYLE_TOGGLE -> hintView.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
+            ANIMATION_STYLE_ANIMATE -> onInputAnimateWhenReady(isVisible)
         }
     }
 
-    private fun onInputVisibilityChange(
+    private fun onInputAnimateWhenReady(animateIn: Boolean) {
+        pendingAnimationStatus = ANIMATION_STATUS_IDLE
+        when (currentAnimationStatus) {
+            ANIMATION_STATUS_IDLE -> onInputAnimate(animateIn)
+            ANIMATION_STATUS_ANIMATING_IN -> if (!animateIn) pendingAnimationStatus = ANIMATION_STATUS_ANIMATING_OUT
+            ANIMATION_STATUS_ANIMATING_OUT -> if (animateIn) pendingAnimationStatus = ANIMATION_STATUS_ANIMATING_IN
+        }
+    }
+
+    private fun onInputAnimate(
             animateIn: Boolean,
             animator: ViewPropertyAnimator = if (animateIn) onCreateInAnimation(hintView) else onCreateOutAnimation(hintView)) {
         animator.duration = animationDurationMillis
         animator.interpolator = interpolator
         animator.setListener(object: Animator.AnimatorListener {
             override fun onAnimationStart(animator: Animator?) {
-                currentAnimationStatus = if (animateIn) HIDE_ANIMATION_STATUS_ANIMATING_IN else HIDE_ANIMATION_STATUS_ANIMATION_OUT
+                currentAnimationStatus = if (animateIn) ANIMATION_STATUS_ANIMATING_IN else ANIMATION_STATUS_ANIMATING_OUT
                 Log.d(tag(), "Started animation $currentAnimationStatus")
             }
             override fun onAnimationEnd(animator: Animator?) {
                 Log.d(tag(), "Finished animation $currentAnimationStatus")
-                currentAnimationStatus = HIDE_ANIMATION_STATUS_IDLE
+                currentAnimationStatus = ANIMATION_STATUS_IDLE
                 when (pendingAnimationStatus) {
-                    HIDE_ANIMATION_STATUS_ANIMATING_IN -> onInputTextIsEmptyChanged(true)
-                    HIDE_ANIMATION_STATUS_ANIMATION_OUT -> onInputTextIsEmptyChanged(false)
+                    ANIMATION_STATUS_ANIMATING_IN -> onInputTextIsEmptyChanged(true)
+                    ANIMATION_STATUS_ANIMATING_OUT -> onInputTextIsEmptyChanged(false)
                     else -> Unit
                 }
             }
             override fun onAnimationCancel(animator: Animator?) {
-                currentAnimationStatus = HIDE_ANIMATION_STATUS_IDLE
+                currentAnimationStatus = ANIMATION_STATUS_IDLE
             }
             override fun onAnimationRepeat(animator: Animator?) {
-                currentAnimationStatus = if (animateIn) HIDE_ANIMATION_STATUS_ANIMATING_IN else HIDE_ANIMATION_STATUS_ANIMATION_OUT
+                currentAnimationStatus = if (animateIn) ANIMATION_STATUS_ANIMATING_IN else ANIMATION_STATUS_ANIMATING_OUT
             }
         })
         animator.start()

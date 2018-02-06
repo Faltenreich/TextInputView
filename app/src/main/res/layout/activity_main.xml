@@ -10,13 +10,26 @@
     <com.faltenreich.inputhintlayout.InputHintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/input_hint_layout">
+        app:overlapAnimation="animate">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_text"
-            android:hint="@string/app_name"/>
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:hint="Single line"/>
+
+    </com.faltenreich.inputhintlayout.InputHintLayout>
+
+    <com.faltenreich.inputhintlayout.InputHintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:hint="Multi line"/>
 
     </com.faltenreich.inputhintlayout.InputHintLayout>
 

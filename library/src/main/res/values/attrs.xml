@@ -3,9 +3,13 @@
 <resources>
 
     <declare-styleable name="InputHintLayout">
+        <attr name="moveAnimation" format="enum">
+            <enum value="0" name="toggle"/>
+            <enum value="1" name="animate"/>
+        </attr>
         <attr name="overlapAnimation" format="enum">
             <enum value="0" name="toggle"/>
-            <enum value="1" name="fade"/>
+            <enum value="1" name="animate"/>
             <enum value="2" name="push"/>
         </attr>
         <attr name="animationDurationMillis" format="integer"/>

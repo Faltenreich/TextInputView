@@ -67,7 +67,8 @@ internal fun EditText.getTextForLine(line: Int): String? =
         }
 
 internal fun EditText.getMaxLineCountCompat(): Int =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) maxLines else getMaxLineCountPreApi16()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) maxLines
+        else getMaxLineCountPreApi16()
 
 internal fun EditText.getMaxLineCountPreApi16(): Int =
         try {
