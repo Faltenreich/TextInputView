@@ -34,7 +34,7 @@ private const val MOVE_ANIMATION_DEFAULT = ANIMATION_STYLE_ANIMATE
 private const val OVERLAP_ANIMATION_DEFAULT = ANIMATION_STYLE_TOGGLE
 
 @Suppress("MemberVisibilityCanBePrivate")
-class InputHintLayout @JvmOverloads constructor(
+open class InputHintLayout @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
@@ -171,9 +171,9 @@ class InputHintLayout @JvmOverloads constructor(
         return hintView
     }
 
-    fun onCreateInAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
+    open fun onCreateInAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(1f)
 
-    fun onCreateOutAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
+    open fun onCreateOutAnimation(view: View): ViewPropertyAnimator = view.animate().alpha(0f)
 
     private fun onInputFocusChanged() {
         textColor = if (editText.hasFocus()) textColorSelected else textColorNormal

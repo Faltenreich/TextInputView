@@ -11,15 +11,14 @@ Nonetheless it adapts to the Material Design Guidelines by adapting primary- and
 - Customize color, style and animation
 - No dependencies other than org.jetbrains.kotlin:kotlin-stdlib-jre7, since this library is completely written in Kotlin
 
-## Usage
+## Getting Started
+
+##### Gradle
 ```gradle
 dependencies {
     implementation 'com.github.Faltenreich:InputHintLayout:1.0.0'
 }
 ```
-
-#### Getting Started
-Embed an EditText into the InputHintLayout and let it take control over the former's hint.
 
 ##### XML
 ```xml
@@ -64,13 +63,53 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
+## Advanced usage
+
 ### Configuration
-Property | Description
---- | ---
-Test | Test
-Test | Test
-Test | Test
-Test | Test
+
+Property | Type | Description | Default
+--- | --- | --- | ---
+android:textColor | color | Applied when embedded EditText loses focus | textColor of the hint of the embedded EditText
+android:textSize | dimension | Text size of the hint | textSize of the hint of the embedded EditText
+android:tint | color | Applied when embedded EditText gets focused | tint of the hint of the embedded EditText
+animationDurationMillis | integer | The time of the move and overlap animation in ms | 300
+hintPadding | dimension | The space between input and hint to define the overlap | TODO
+moveAnimation | enum | Applied when the input has been cleared or re-filled (options: toggle, animate) | animate
+overlapAnimation | enum | Applied when the input text overlaps the hint including its padding (options: toggle, animation, push) | toggle
+
+### Overrides
+
+##### Java
+```java
+public class CustomInputHintLayout extends InputHintLayout {
+    
+    public CustomInputHintLayout(@NotNull Context context) {
+        super(context);
+    }
+    
+    @NonNull
+    @Override
+    public ViewPropertyAnimator onCreateInAnimation(@NotNull View view) {
+        return customInAnimation();
+    }
+    
+    @NonNull
+    @Override
+    public ViewPropertyAnimator onCreateOutAnimation(@NotNull View view) {
+        return customOutAnimation();
+    }
+}
+```
+
+##### Kotlin
+```kotlin
+class CustomInputHintLayout(context: Context) : InputHintLayout(context) {
+    
+    override fun onCreateInAnimation(view: View): ViewPropertyAnimator = customInAnimation()
+    
+    override fun onCreateOutAnimation(view: View): ViewPropertyAnimator = customOutAnimation()
+}
+```
 
 ## License
 
