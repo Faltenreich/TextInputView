@@ -5,7 +5,7 @@ A different approach to the [InputTextLayout](https://developer.android.com/refe
 The InputHintLayout takes less space for repositioning its hint and allows for more customization. 
 Nonetheless it adapts to the Material Design Guidelines by adapting primary- and accent colors as well as the style of the target hint.
 
-![Preview](https://github.com/Faltenreich/InputHintLayout/blob/develop/preview.gif | width=100)
+<img src="https://github.com/Faltenreich/InputHintLayout/blob/develop/preview.gif" width="100">
 
 ## Features
 - Keep the hint of an EditText visible to the user at all times
