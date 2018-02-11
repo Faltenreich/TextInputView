@@ -1,4 +1,4 @@
-package com.faltenreich.inputhintlayout
+package com.faltenreich.textinputview
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator

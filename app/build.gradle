@@ -6,7 +6,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        applicationId "com.faltenreich.inputhintlayout"
+        applicationId "com.faltenreich.textinputview"
         minSdkVersion 14
         targetSdkVersion 27
         versionCode 1

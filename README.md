@@ -1,11 +1,11 @@
-# InputHintLayout
+# TextInputView
 
 
-A different approach to the [InputTextLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html).
-The InputHintLayout takes less space for repositioning its hint and allows for more customization. 
+A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html).
+The TextInputView takes less space for repositioning its hint and allows for more customization. 
 Nonetheless it adapts to the Material Design Guidelines by adapting primary- and accent colors as well as the style of the target hint.
 
-<img src="https://github.com/Faltenreich/InputHintLayout/blob/develop/preview.gif" width="200">
+<img src="https://github.com/Faltenreich/TextInputView/blob/develop/preview.gif" width="200">
 
 ## Features
 - Keep the hint of an EditText visible to the user at all times
@@ -18,13 +18,13 @@ Nonetheless it adapts to the Material Design Guidelines by adapting primary- and
 ##### Gradle
 ```gradle
 dependencies {
-    implementation 'com.github.Faltenreich:InputHintLayout:1.0.0'
+    implementation 'com.github.Faltenreich:TextInputView:1.0.0'
 }
 ```
 
 ##### XML
 ```xml
-<com.faltenreich.inputhintlayout.InputHintLayout
+<com.faltenreich.textinputview.TextInputView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:overlapAnimation="animate">
@@ -34,7 +34,7 @@ dependencies {
         android:layout_height="wrap_content"
         android:hint="I will move on typing"/>
         
-</com.faltenreich.inputhintlayout.InputHintLayout>
+</com.faltenreich.textinputview.TextInputView>
 ```
 
 ##### Java
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        InputHintLayout inputHintLayout = new InputHintLayout(getContext(), findViewById(R.id.editText));
+        TextInputView textInputView = new TextInputView(getContext(), findViewById(R.id.editText));
     }
 }
 
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         
-        val inputHintLayout = InputHintLayout(context, findViewById(R.id.editText))
+        val textInputView = TextInputView(context, findViewById(R.id.editText))
     }
 }
 ```
@@ -78,40 +78,6 @@ animationDurationMillis | integer | The time of the move and overlap animation i
 hintPadding | dimension | The space between input and hint to define the overlap | TODO
 moveAnimation | enum | Applied when the input has been cleared or re-filled (options: toggle, animate) | animate
 overlapAnimation | enum | Applied when the input text overlaps the hint including its padding (options: toggle, animation, push) | toggle
-
-### Overrides
-
-##### Java
-```java
-public class CustomInputHintLayout extends InputHintLayout {
-    
-    public CustomInputHintLayout(@NotNull Context context) {
-        super(context);
-    }
-    
-    @NonNull
-    @Override
-    public ViewPropertyAnimator onCreateInAnimation(@NotNull View view) {
-        return customInAnimation();
-    }
-    
-    @NonNull
-    @Override
-    public ViewPropertyAnimator onCreateOutAnimation(@NotNull View view) {
-        return customOutAnimation();
-    }
-}
-```
-
-##### Kotlin
-```kotlin
-class CustomInputHintLayout(context: Context) : InputHintLayout(context) {
-    
-    override fun onCreateInAnimation(view: View): ViewPropertyAnimator = customInAnimation()
-    
-    override fun onCreateOutAnimation(view: View): ViewPropertyAnimator = customOutAnimation()
-}
-```
 
 ## License
 

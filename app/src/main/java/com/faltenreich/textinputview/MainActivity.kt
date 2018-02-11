@@ -1,4 +1,4 @@
-package com.faltenreich.inputhintlayout
+package com.faltenreich.textinputview
 
 import android.os.Bundle
 import android.os.Handler

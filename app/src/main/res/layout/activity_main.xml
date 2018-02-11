@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.faltenreich.inputhintlayout.InputHintLayout
+    <com.faltenreich.textinputview.TextInputView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,9 +18,9 @@
             android:ellipsize="end"
             android:hint="Hint single"/>
 
-    </com.faltenreich.inputhintlayout.InputHintLayout>
+    </com.faltenreich.textinputview.TextInputView>
 
-    <com.faltenreich.inputhintlayout.InputHintLayout
+    <com.faltenreich.textinputview.TextInputView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -31,6 +31,6 @@
             android:ellipsize="end"
             android:hint="Hint multi"/>
 
-    </com.faltenreich.inputhintlayout.InputHintLayout>
+    </com.faltenreich.textinputview.TextInputView>
 
 </LinearLayout>

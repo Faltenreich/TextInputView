@@ -1,4 +1,4 @@
-package com.faltenreich.inputhintlayout
+package com.faltenreich.textinputview
 
 import android.content.Context
 import android.text.Editable
@@ -24,7 +24,7 @@ const val ANIMATION_STYLE_PUSH = 1
 private const val ANIMATION_DURATION = 200L
 
 @Suppress("MemberVisibilityCanBePrivate")
-open class InputHintLayout @JvmOverloads constructor(
+open class TextInputView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
@@ -70,11 +70,11 @@ open class InputHintLayout @JvmOverloads constructor(
 
     init {
         attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.InputHintLayout, 0, 0)
-            customOverlapAnimation = typedArray.getInt(R.styleable.InputHintLayout_overlapAnimation, -1)
-            customTextSize = typedArray.getFloat(R.styleable.InputHintLayout_android_textSize, -1f)
-            customTextColorNormal = typedArray.getColorStateList(R.styleable.InputHintLayout_android_textColor)?.defaultColor ?: -1
-            customTextColorSelected = typedArray.getColorStateList(R.styleable.InputHintLayout_android_tint)?.defaultColor ?: -1
+            val typedArray = context.obtainStyledAttributes(it, R.styleable.TextInputView, 0, 0)
+            customOverlapAnimation = typedArray.getInt(R.styleable.TextInputView_overlapAnimation, -1)
+            customTextSize = typedArray.getFloat(R.styleable.TextInputView_android_textSize, -1f)
+            customTextColorNormal = typedArray.getColorStateList(R.styleable.TextInputView_android_textColor)?.defaultColor ?: -1
+            customTextColorSelected = typedArray.getColorStateList(R.styleable.TextInputView_android_tint)?.defaultColor ?: -1
             typedArray.recycle()
         }
     }
