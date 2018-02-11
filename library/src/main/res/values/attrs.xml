@@ -3,7 +3,7 @@
 <resources>
 
     <declare-styleable name="TextInputView">
-        <attr name="overlapAnimation" format="enum">
+        <attr name="overlapAction" format="enum">
             <enum value="0" name="toggle"/>
             <enum value="1" name="push"/>
         </attr>
