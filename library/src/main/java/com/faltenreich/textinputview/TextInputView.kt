@@ -18,8 +18,8 @@ import android.widget.TextView
  * Created by Faltenreich on 21.01.2018
  */
 
-const val OVERLAP_ACTION_TOGGLE = 0
-const val OVERLAP_ACTION_PUSH = 1
+const val OVERLAP_ACTION_PUSH = 0
+const val OVERLAP_ACTION_TOGGLE = 1
 
 private const val ANIMATION_DURATION = 200L
 
@@ -69,13 +69,13 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
     var textColorNormal: Int = -1
         set(value) {
             field = value
-            onInputFocusChanged()
+            invalidateHint()
         }
 
     var textColorSelected: Int = -1
         set(value) {
             field = value
-            onInputFocusChanged()
+            invalidateHint()
         }
 
     init {
@@ -87,7 +87,7 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
             customTextColorSelected = typedArray.getColorStateList(R.styleable.TextInputView_android_tint)?.defaultColor ?: -1
             typedArray.recycle()
         }
-        editText?.let { addView(editText) }
+        editText?.let { addView(it) }
     }
 
     override fun onAttachedToWindow() {
@@ -104,56 +104,40 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
             hintView.setLayoutGravity(Gravity.BOTTOM)
         }
 
-        overlapAction = if (customOverlapAction >= 0) customOverlapAction else OVERLAP_ACTION_TOGGLE
+        overlapAction = if (customOverlapAction >= 0) customOverlapAction else OVERLAP_ACTION_PUSH
         textSize = if (customTextSize >= 0) customTextSize else editText.textSize
         textColorNormal = if (customTextColorNormal >= 0) customTextColorNormal else editText.hintTextColors.defaultColor
         textColorSelected = if (customTextColorSelected >= 0) customTextColorSelected else context.accentColor()
 
         if (!isInEditMode) {
-            editText.onFocusChangeListener = OnFocusChangeListener { _, _ -> onInputFocusChanged() }
+            editText.onFocusChangeListener = OnFocusChangeListener { _, _ -> invalidateHint() }
             editText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
-                override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) { onInputTextChanged() }
+                override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) { invalidateHint() }
                 override fun afterTextChanged(editable: Editable?) {}
             })
-            onInputTextChanged()
+            editText.setOnGlobalLayoutChangeListener { invalidateHint(false) }
         }
     }
 
-    private fun onInputFocusChanged() {
+    private fun invalidateHint(animate: Boolean = true) {
         val hasFocus = editText.hasFocus()
         val isEmpty = editText.text.isEmpty()
 
         textColor = if (hasFocus) textColorSelected else textColorNormal
 
-        val position = if (!hasFocus && isEmpty) 0 else maxLineWidth
-        hintView.animate().translationX(position.toFloat()).setDuration(ANIMATION_DURATION).start()
-    }
-
-    private fun onInputTextChanged() {
-        // Ensure correct line count on shrinking text
-        if (editText.lineCount <= maxLineCount) {
-            editText.setLines(editText.lineCount)
-        }
-
-        val currentLineWidth = editText.getTextWidth(editText.lineCount - 1)
-        val exceededLineWidth = currentLineWidth > maxLineWidth
-        if (exceededLineWidth) {
-            if (editText.lineCount < maxLineCount) {
-                editText.setLines(editText.lineCount + 1)
-            } else {
-                onInputTextOffsetChanged(currentLineWidth - maxLineWidth)
+        if (editText.lineCount == 1) {
+            hintView.visibility = View.VISIBLE
+            val offset =
+                    if (isEmpty) { if (!hasFocus) 0F else maxLineWidth.toFloat() }
+                    else { Math.max(editText.getTextWidth(editText.lineCount - 1), maxLineWidth.toFloat()) }
+            val overlaps = offset > maxLineWidth
+            when (overlapAction) {
+                OVERLAP_ACTION_TOGGLE -> if (overlaps) hintView.visibility = View.GONE else View.VISIBLE
+                OVERLAP_ACTION_PUSH -> hintView.animate().translationX(offset).setDuration(if (animate && !overlaps) ANIMATION_DURATION else 0).start()
             }
         } else {
-            onInputTextOffsetChanged(0f)
-        }
-    }
-
-    private fun onInputTextOffsetChanged(offset: Float) {
-        val overlaps = offset > 0
-        when (overlapAction) {
-            OVERLAP_ACTION_TOGGLE -> hintView.visibility = if (overlaps) View.INVISIBLE else View.VISIBLE
-            OVERLAP_ACTION_PUSH -> hintView.setOffsetStart(offset)
+            hintView.visibility = View.GONE
         }
     }
 }

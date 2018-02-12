@@ -18,15 +18,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        addTextInputView()
     }
 
     private fun addTextInputView() {
         val editText = EditText(this)
         editText.maxLines = 2
-        editText.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua")
+        editText.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod")
         editText.hint = "Hint"
         val textInputView = TextInputView(this, editText = editText)
-        // FIXME: This leads to broken lines
         layout.addView(textInputView)
     }
 

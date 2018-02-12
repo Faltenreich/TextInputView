@@ -4,8 +4,8 @@
 
     <declare-styleable name="TextInputView">
         <attr name="overlapAction" format="enum">
-            <enum value="0" name="toggle"/>
-            <enum value="1" name="push"/>
+            <enum value="0" name="push"/>
+            <enum value="1" name="toggle"/>
         </attr>
         <attr name="hintPadding" format="dimension"/>
         <attr name="android:textSize"/>

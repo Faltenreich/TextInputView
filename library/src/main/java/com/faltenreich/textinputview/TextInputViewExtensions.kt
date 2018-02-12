@@ -8,6 +8,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -30,6 +31,20 @@ internal fun Context.accentColor(): Int {
 }
 
 internal fun ViewGroup.views(): List<View> = (0 until childCount).map { getChildAt(it) }
+
+internal fun View.setOnGlobalLayoutChangeListener(action: () -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+            } else {
+                @Suppress("DEPRECATION")
+                viewTreeObserver.removeGlobalOnLayoutListener(this)
+            }
+            action()
+        }
+    })
+}
 
 internal fun TextView.setTextColor(colorTo: Int, durationMillis: Long, interpolator: Interpolator) {
     if (durationMillis > 0) {
