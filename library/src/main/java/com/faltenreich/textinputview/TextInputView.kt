@@ -5,11 +5,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -22,6 +20,7 @@ const val OVERLAP_ACTION_PUSH = 0
 const val OVERLAP_ACTION_TOGGLE = 1
 
 private const val ANIMATION_DURATION = 200L
+private const val HINT_PADDING = 8F
 
 @Suppress("MemberVisibilityCanBePrivate")
 open class TextInputView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, editText: EditText? = null) : FrameLayout(context, attrs, defStyleAttr) {
@@ -30,8 +29,6 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
     private var customTextSize: Float = -1f
     private var customTextColorNormal: Int = -1
     private var customTextColorSelected: Int = -1
-
-    private var maxLineCount: Int = 1
 
     private val editText: EditText by lazy {
         try { views().first { it is EditText } as EditText }
@@ -54,13 +51,9 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
     private var maxLineWidth: Int = 0
         get() = editText.width - hintView.width
 
-    private var textColor: Int
-        get() = hintView.textColors.defaultColor
-        set(value) { hintView.setTextColor(value, ANIMATION_DURATION, interpolator) }
+    private val hintPadding by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, HINT_PADDING, resources.displayMetrics) }
 
     var overlapAction: Int = -1
-
-    var interpolator: Interpolator = AccelerateDecelerateInterpolator()
 
     var textSize: Float
         get() = hintView.textSize
@@ -96,14 +89,6 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     private fun initLayout() {
-        maxLineCount = editText.getMaxLineCountCompat()
-
-        // Ensure input alignment on multiline
-        if (maxLineCount > 1) {
-            editText.gravity = Gravity.TOP
-            hintView.setLayoutGravity(Gravity.BOTTOM)
-        }
-
         overlapAction = if (customOverlapAction >= 0) customOverlapAction else OVERLAP_ACTION_PUSH
         textSize = if (customTextSize >= 0) customTextSize else editText.textSize
         textColorNormal = if (customTextColorNormal >= 0) customTextColorNormal else editText.hintTextColors.defaultColor
@@ -120,24 +105,30 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
         }
     }
 
-    private fun invalidateHint(animate: Boolean = true) {
+    private fun invalidateHint(shouldAnimate: Boolean = true) {
         val hasFocus = editText.hasFocus()
         val isEmpty = editText.text.isEmpty()
 
-        textColor = if (hasFocus) textColorSelected else textColorNormal
+        val textColor = if (hasFocus) textColorSelected else textColorNormal
+        hintView.setTextColor(textColor, ANIMATION_DURATION, AccelerateDecelerateInterpolator())
 
-        if (editText.lineCount == 1) {
-            hintView.visibility = View.VISIBLE
-            val offset =
-                    if (isEmpty) { if (!hasFocus) 0F else maxLineWidth.toFloat() }
-                    else { Math.max(editText.getTextWidth(editText.lineCount - 1), maxLineWidth.toFloat()) }
-            val overlaps = offset > maxLineWidth
-            when (overlapAction) {
-                OVERLAP_ACTION_TOGGLE -> if (overlaps) hintView.visibility = View.GONE else View.VISIBLE
-                OVERLAP_ACTION_PUSH -> hintView.animate().translationX(offset).setDuration(if (animate && !overlaps) ANIMATION_DURATION else 0).start()
-            }
-        } else {
-            hintView.visibility = View.GONE
+        val alignStart = editText.textDirection == View.TEXT_DIRECTION_LTR
+        val offset =
+                if (isEmpty) { if (!hasFocus) 0F else maxLineWidth.toFloat() }
+                else { Math.max(editText.getTextWidth(editText.lineCount - 1) + hintPadding, maxLineWidth.toFloat()) }
+        val overlaps = offset > maxLineWidth
+        val visibility =
+                when (overlapAction) {
+                    OVERLAP_ACTION_TOGGLE -> if (overlaps) View.GONE else View.VISIBLE
+                    OVERLAP_ACTION_PUSH -> {
+                        val shrink = offset < hintView.translationX
+                        val animate = shouldAnimate && (isEmpty || shrink)
+                        val duration = if (animate) ANIMATION_DURATION else 0
+                        hintView.animate().translationX(offset).setDuration(duration).start()
+                        View.VISIBLE
+                    }
+                    else -> View.VISIBLE
         }
+        hintView.visibility = if (editText.lineCount > 1) View.GONE else visibility
     }
 }
