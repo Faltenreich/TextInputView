@@ -112,7 +112,6 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
         val textColor = if (hasFocus) textColorSelected else textColorNormal
         hintView.setTextColor(textColor, ANIMATION_DURATION, AccelerateDecelerateInterpolator())
 
-        val alignStart = editText.textDirection == View.TEXT_DIRECTION_LTR
         val offset =
                 if (isEmpty) { if (!hasFocus) 0F else maxLineWidth.toFloat() }
                 else { Math.max(editText.getTextWidth(editText.lineCount - 1) + hintPadding, maxLineWidth.toFloat()) }
@@ -124,6 +123,7 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
                         val shrink = offset < hintView.translationX
                         val animate = shouldAnimate && (isEmpty || shrink)
                         val duration = if (animate) ANIMATION_DURATION else 0
+                        hintView.clearAnimation()
                         hintView.animate().translationX(offset).setDuration(duration).start()
                         View.VISIBLE
                     }
