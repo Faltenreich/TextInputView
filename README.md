@@ -1,12 +1,11 @@
 # TextInputView
 
-
 *A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
+
+<img src="https://github.com/Faltenreich/TextInputView/blob/develop/preview.gif" width="200">
 
 Instead of preserving extra space for repositioning its hint, the TextInputView will place it into the embedded EditText.
 The Material Design Guidelines are being respected by adapting primary- and accent colors as well as the style of the target hint.
-
-<img src="https://github.com/Faltenreich/TextInputView/blob/develop/preview.gif" width="200">
 
 ## Features
 - **More space for you:** Spare the extra space on top of an EditText within a TextInputLayout
@@ -15,7 +14,7 @@ The Material Design Guidelines are being respected by adapting primary- and acce
 - **Gravity:** Support for Gravity.START (Gravity.LEFT), Gravity.END (Gravity.RIGHT) and even Gravity.CENTER
 - **Minimum footprint:** No dependencies *(other than org.jetbrains.kotlin:kotlin-stdlib-jre7, since this library is completely written in Kotlin)*
 
-## Getting Started
+### Getting Started
 
 ##### Gradle
 ```gradle
@@ -67,31 +66,28 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-## Advanced usage
-
 ### Configuration
 
-Property | Type | Description | Default
---- | --- | --- | ---
-android:textColor | color | Applied when embedded EditText loses focus | textColor of the hint of the embedded EditText
-android:textSize | dimension | Text size of the hint | textSize of the hint of the embedded EditText
-android:tint | color | Applied when embedded EditText gets focused | tint of the hint of the embedded EditText
-animationDurationMillis | integer | The time of the move and overlap animation in ms | 300
-hintPadding | dimension | The space between input and hint to define the overlap | TODO
-moveAnimation | enum | Applied when the input has been cleared or re-filled (options: toggle, animate) | animate
-overlapAnimation | enum | Applied when the input text overlaps the hint including its padding (options: toggle, animation, push) | toggle
+Property | Type | Description
+--- | --- | ---
+android:textColor | color | Applied when embedded EditText loses focus (defaults to textColor of the hint)
+android:textSize | dimension | Text size of the hint (defaults to textSize of the hint)
+android:tint | color | Applied when embedded EditText gets focused (defaults to tint of the hint)
+overlapAction | enum | Applied when the input text overlaps the hint including its padding (options: push, toggle) (defaults to toggle)
 
-## FAQ
+### FAQ
 
-- **How does the TextInputView work?**
-- The TextInput wraps a given EditText and replaces its hint with a TextView 
+**How does the TextInputView work?**
+
+The TextInput wraps a given EditText and replaces its hint with a TextView 
 that is being repositioned as the user focuses the EditText or changes its text.
 
-- **What about RTL?**
-- Right-to-left input is supported throughout resolving text directions (android:textDirection) 
+**What about RTL?**
+
+Right-to-left input is supported throughout resolving text directions (android:textDirection) 
 and using the Unicode Bidirectional Algorithm (java.text.Bidi).
 
-## License
+### License
 
 Copyright 2018 Philipp Fahlteich
 
