@@ -19,7 +19,7 @@
             android:id="@+id/editText"
             android:maxLines="1"
             android:ellipsize="end"
-            android:hint="Hint"/>
+            android:hint="@string/app_name"/>
 
     </com.faltenreich.textinputview.TextInputView>
 

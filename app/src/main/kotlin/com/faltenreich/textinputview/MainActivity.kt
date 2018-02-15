@@ -32,44 +32,62 @@ class MainActivity : AppCompatActivity() {
     private fun showcase() {
         editText.clearFocus()
 
-        val input = "Input"
-        val delay = 5000L
-        val speed = 200L
+        val input = "Just move it"
 
         var add = true
         var index = 0
+        var wait = 0
 
         editText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 
+        Handler().postDelayed({
+            editText.requestFocus()
+        }, 3500)
+
         val handler = Handler { message ->
             editText.setText(message.obj as String)
-            editText.setSelection(editText.text.length);
+            editText.setSelection(editText.text.length)
             true
         }
 
         val timer = Timer()
         timer.scheduleAtFixedRate(object: TimerTask() {
             override fun run() {
+                val text = input.substring(IntRange(0, index))
                 val message = Message()
-                message.obj = if (index >= 0) input.substring(IntRange(0, index)) else ""
-                handler.sendMessage(message)
+                message.obj = if (index >= 0) text else ""
 
-                if (add) {
-                    if (index < input.length - 1) {
-                        index++
-                    } else {
-                        add = !add
-                        index--
-                    }
+                if (wait >= 0) {
+                    wait--
                 } else {
-                    if (index < 0) {
-                        timer.cancel()
-                        timer.purge()
+                    if (text.length == input.length) {
+                        wait = 4
+                    }
+
+                    handler.sendMessage(message)
+
+                    if (add) {
+                        if (index < input.length - 1) {
+                            index++
+                        } else {
+                            add = !add
+                            index--
+                        }
                     } else {
-                        index--
+                        if (index < 0) {
+                            timer.cancel()
+                            timer.purge()
+                        } else {
+                            index--
+                        }
                     }
                 }
             }
-        }, delay, speed)
+        }, 4500, 140L)
+
+
+        Handler().postDelayed({
+            editText.clearFocus()
+        }, 9100)
     }
 }
