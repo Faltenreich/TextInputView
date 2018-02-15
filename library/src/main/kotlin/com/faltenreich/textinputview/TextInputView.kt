@@ -112,15 +112,28 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
         val textColor = if (hasFocus) textColorSelected else textColorNormal
         hintView.setTextColor(textColor, ANIMATION_DURATION, AccelerateDecelerateInterpolator())
 
-        val offset =
-                if (isEmpty) { if (!hasFocus) 0F else maxLineWidth.toFloat() }
-                else { Math.max(editText.getTextWidth(editText.lineCount - 1) + hintPadding, maxLineWidth.toFloat()) }
-        val overlaps = offset > maxLineWidth
+        val offset: Float
+        val overlaps: Boolean
+        val shrink: Boolean
+
+        if (editText.isGravityEnd()) {
+            offset =
+                    if (isEmpty) { if (hasFocus) 0F else (editText.width - hintView.width).toFloat() }
+                    else { Math.min(0F, editText.width - editText.getTextWidth(editText.lineCount - 1) - hintView.width - hintPadding) }
+            overlaps = offset < 0
+            shrink = offset > hintView.translationX
+        } else {
+            offset =
+                    if (isEmpty) { if (hasFocus) maxLineWidth.toFloat() else 0F }
+                    else { Math.max(editText.getTextWidth(editText.lineCount - 1) + hintPadding, maxLineWidth.toFloat()) }
+            overlaps = offset > maxLineWidth
+            shrink = offset < hintView.translationX
+        }
+
         val visibility =
                 when (overlapAction) {
                     OVERLAP_ACTION_TOGGLE -> if (overlaps) View.GONE else View.VISIBLE
                     OVERLAP_ACTION_PUSH -> {
-                        val shrink = offset < hintView.translationX
                         val animate = shouldAnimate && (isEmpty || shrink)
                         val duration = if (animate) ANIMATION_DURATION else 0
                         hintView.clearAnimation()

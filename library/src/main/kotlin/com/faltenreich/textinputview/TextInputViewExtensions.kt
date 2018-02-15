@@ -2,15 +2,19 @@ package com.faltenreich.textinputview
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.TextView
+
+
 
 /**
  * Created by Faltenreich on 22.01.2018
@@ -70,3 +74,8 @@ private fun EditText.getTextForLine(line: Int): String? =
             val isInBounds = start < end && start < lineCharacters && end <= lineCharacters
             if (isInBounds) input?.substring(start, end) else null
         }
+
+private fun TextView.absoluteGravity() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) Gravity.getAbsoluteGravity(gravity, layoutDirection) else gravity
+
+@SuppressLint("RtlHardcoded")
+internal fun TextView.isGravityEnd(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.RIGHT

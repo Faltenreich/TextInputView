@@ -1,17 +1,19 @@
 # TextInputView
 
 
-A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html).
-The TextInputView takes less space for repositioning its hint and allows for more customization. 
-Nonetheless it adapts to the Material Design Guidelines by adapting primary- and accent colors as well as the style of the target hint.
+*A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
+
+Instead of preserving extra space for repositioning its hint, the TextInputView will place it into the embedded EditText.
+The Material Design Guidelines are being respected by adapting primary- and accent colors as well as the style of the target hint.
 
 <img src="https://github.com/Faltenreich/TextInputView/blob/develop/preview.gif" width="200">
 
 ## Features
-- Keep the hint of an EditText visible to the user at all times
-- Prevent unused space on an empty EditText
-- Customize color, style and animation
-- No dependencies other than org.jetbrains.kotlin:kotlin-stdlib-jre7, since this library is completely written in Kotlin
+- **More space for you:** Spare the extra space on top of an EditText within a TextInputLayout
+- **Customization:** Adjust textSize, textColor, padding and overlap action of the hint
+- **RTL:** Support for right-to-left devices, text and properties
+- **Gravity:** Support for Gravity.START (Gravity.LEFT), Gravity.END (Gravity.RIGHT) and even Gravity.CENTER
+- **Minimum footprint:** No dependencies *(other than org.jetbrains.kotlin:kotlin-stdlib-jre7, since this library is completely written in Kotlin)*
 
 ## Getting Started
 
@@ -27,12 +29,12 @@ dependencies {
 <com.faltenreich.textinputview.TextInputView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:overlapAnimation="animate">
+    app:overlapAction="push">
     
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="I will move on typing"/>
+        android:hint="I will stay on user input"/>
         
 </com.faltenreich.textinputview.TextInputView>
 ```
@@ -78,6 +80,16 @@ animationDurationMillis | integer | The time of the move and overlap animation i
 hintPadding | dimension | The space between input and hint to define the overlap | TODO
 moveAnimation | enum | Applied when the input has been cleared or re-filled (options: toggle, animate) | animate
 overlapAnimation | enum | Applied when the input text overlaps the hint including its padding (options: toggle, animation, push) | toggle
+
+## FAQ
+
+- **How does the TextInputView work?**
+- The TextInput wraps a given EditText and replaces its hint with a TextView 
+that is being repositioned as the user focuses the EditText or changes its text.
+
+- **What about RTL?**
+- Right-to-left input is supported throughout resolving text directions (android:textDirection) 
+and using the Unicode Bidirectional Algorithm (java.text.Bidi).
 
 ## License
 
