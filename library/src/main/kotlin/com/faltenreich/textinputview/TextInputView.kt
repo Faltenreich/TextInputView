@@ -25,6 +25,8 @@ private const val HINT_PADDING = 8F
 @Suppress("MemberVisibilityCanBePrivate")
 open class TextInputView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, editText: EditText? = null) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private val isRtl: Boolean by lazy { context.isRtl() }
+
     private var customOverlapAction: Int = -1
     private var customTextSize: Float = -1f
     private var customTextColorNormal: Int = -1
@@ -124,7 +126,7 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
                 overlaps = offset > maxLineWidth
                 shrink = offset < hintView.translationX
             }
-            editText.isGravityEnd() -> {
+            editText.isGravityRight() -> {
                 offset =
                         if (isEmpty) { if (hasFocus) 0F else (editText.width - hintView.width).toFloat() }
                         else { Math.min(0F, editText.width - editText.getTextWidth(editText.lineCount - 1) - hintView.width - hintPadding) }
@@ -140,6 +142,7 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
             }
         }
 
+        val realOffset = if (isRtl) -offset else offset
         val visibility =
                 when (overlapAction) {
                     OVERLAP_ACTION_TOGGLE -> if (overlaps) View.GONE else View.VISIBLE
@@ -147,7 +150,7 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
                         val animate = shouldAnimate && (isEmpty || shrink)
                         val duration = if (animate) ANIMATION_DURATION else 0
                         hintView.clearAnimation()
-                        hintView.animate().translationX(offset).setDuration(duration).start()
+                        hintView.animate().translationX(realOffset).setDuration(duration).start()
                         View.VISIBLE
                     }
                     else -> View.VISIBLE
