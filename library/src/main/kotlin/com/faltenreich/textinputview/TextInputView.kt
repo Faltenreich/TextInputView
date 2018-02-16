@@ -116,18 +116,28 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
         val overlaps: Boolean
         val shrink: Boolean
 
-        if (editText.isGravityEnd()) {
-            offset =
-                    if (isEmpty) { if (hasFocus) 0F else (editText.width - hintView.width).toFloat() }
-                    else { Math.min(0F, editText.width - editText.getTextWidth(editText.lineCount - 1) - hintView.width - hintPadding) }
-            overlaps = offset < 0
-            shrink = offset > hintView.translationX
-        } else {
-            offset =
-                    if (isEmpty) { if (hasFocus) maxLineWidth.toFloat() else 0F }
-                    else { Math.max(editText.getTextWidth(editText.lineCount - 1) + hintPadding, maxLineWidth.toFloat()) }
-            overlaps = offset > maxLineWidth
-            shrink = offset < hintView.translationX
+        when {
+            editText.isGravityCenter() -> {
+                offset =
+                        if (isEmpty) { if (hasFocus) maxLineWidth.toFloat() else (editText.width.toFloat() - hintView.width) / 2 }
+                        else { Math.max(maxLineWidth.toFloat(), (editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2 + hintPadding) }
+                overlaps = offset > maxLineWidth
+                shrink = offset < hintView.translationX
+            }
+            editText.isGravityEnd() -> {
+                offset =
+                        if (isEmpty) { if (hasFocus) 0F else (editText.width - hintView.width).toFloat() }
+                        else { Math.min(0F, editText.width - editText.getTextWidth(editText.lineCount - 1) - hintView.width - hintPadding) }
+                overlaps = offset < 0
+                shrink = offset > hintView.translationX
+            }
+            else -> {
+                offset =
+                        if (isEmpty) { if (hasFocus) maxLineWidth.toFloat() else 0F }
+                        else { Math.max(maxLineWidth.toFloat(), editText.getTextWidth(editText.lineCount - 1) + hintPadding) }
+                overlaps = offset > maxLineWidth
+                shrink = offset < hintView.translationX
+            }
         }
 
         val visibility =

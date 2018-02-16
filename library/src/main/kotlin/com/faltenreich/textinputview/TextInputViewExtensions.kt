@@ -79,3 +79,5 @@ private fun TextView.absoluteGravity() = if (Build.VERSION.SDK_INT >= Build.VERS
 
 @SuppressLint("RtlHardcoded")
 internal fun TextView.isGravityEnd(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.RIGHT
+
+internal fun TextView.isGravityCenter(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.CENTER_HORIZONTAL
