@@ -25,6 +25,8 @@ private const val HINT_PADDING = 8F
 @Suppress("MemberVisibilityCanBePrivate")
 open class TextInputView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, editText: EditText? = null) : FrameLayout(context, attrs, defStyleAttr) {
 
+    constructor(context: Context, editText: EditText) : this(context, null, 0, editText)
+
     private val isRtl: Boolean by lazy { context.isRtl() }
 
     private var customOverlapAction: Int = -1
