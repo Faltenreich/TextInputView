@@ -14,8 +14,6 @@ import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.TextView
 
-
-
 /**
  * Created by Faltenreich on 22.01.2018
  */
@@ -37,6 +35,8 @@ internal fun View.setOnGlobalLayoutChangeListener(action: () -> Unit) {
         }
     })
 }
+
+internal fun Context.isRtl(): Boolean = resources.getBoolean(R.bool.is_rtl)
 
 internal fun Context.accentColor(): Int {
     val attr =
@@ -82,4 +82,14 @@ internal fun TextView.isGravityRight(): Boolean = absoluteGravity() and Gravity.
 
 internal fun TextView.isGravityCenter(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.CENTER_HORIZONTAL
 
-fun Context.isRtl(): Boolean = resources.getBoolean(R.bool.is_rtl)
+internal fun TextView.compoundDrawableOffset(defaultPadding: Int): Int {
+    val alignEnd = isGravityRight()
+    val compoundIndex = if (alignEnd) 0 else 2
+    val compoundPadding = when {
+        compoundDrawablePadding > 0 -> compoundDrawablePadding
+        !alignEnd -> defaultPadding
+        else -> 0
+    }
+    val compoundDrawable = compoundDrawables[compoundIndex]
+    return compoundDrawable?.let { it.intrinsicWidth + compoundPadding } ?: 0
+}

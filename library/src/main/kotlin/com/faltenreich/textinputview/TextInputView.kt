@@ -53,7 +53,7 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     private var maxLineWidth: Int = 0
-        get() = editText.width - hintView.width
+        get() = editText.width - hintView.width - editText.compoundDrawableOffset(hintPadding.toInt())
 
     private val hintPadding by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, HINT_PADDING, resources.displayMetrics) }
 

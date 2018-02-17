@@ -39,6 +39,7 @@ class TextInputViewInstrumentedKotlinTest {
         editText.gravity = Gravity.END
         Assert.assertEquals(editText.isGravityRight(), true)
         Assert.assertEquals(editText.isGravityCenter(), false)
+        editText.gravity = Gravity.START
     }
 
     @Test
