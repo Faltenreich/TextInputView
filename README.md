@@ -8,11 +8,11 @@ Instead of preserving extra space for repositioning its hint, the TextInputView 
 The Material Design Guidelines are being respected by adapting primary- and accent colors as well as the style of the target hint.
 
 ## Features
-- **More space for you:** Spare the extra space on top of an EditText within a TextInputLayout
+- **More space for you:** Reduce the extra space for a permanent hint to an absolute minimum
 - **Customization:** Adjust textSize, textColor, padding and overlap action of the hint
-- **RTL:** Support for right-to-left devices, text and properties
-- **Gravity:** Support for Gravity.START (Gravity.LEFT), Gravity.END (Gravity.RIGHT) and even Gravity.CENTER
-- **Minimum footprint:** No dependencies *(other than org.jetbrains.kotlin:kotlin-stdlib-jre7, since this library is completely written in Kotlin)*
+- **Gravity:** Support for Gravity.START (Gravity.LEFT), Gravity.END (Gravity.RIGHT) - and even Gravity.CENTER
+- **RTL:** Support for right-to-left configurations
+- **Minimum footprint:** No dependencies *(other than org.jetbrains.kotlin:kotlin-stdlib-jre7)*
 
 ### Getting Started
 
@@ -84,8 +84,7 @@ that is being repositioned as the user focuses the EditText or changes its text.
 
 **What about RTL?**
 
-Right-to-left input is supported throughout resolving text directions (android:textDirection) 
-and using the Unicode Bidirectional Algorithm (java.text.Bidi).
+Right-to-left input is supported throughout using the Android resource system (res/values-ldrtl).
 
 ### License
 

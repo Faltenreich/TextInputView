@@ -75,11 +75,11 @@ private fun EditText.getTextForLine(line: Int): String? =
             if (isInBounds) input?.substring(start, end) else null
         }
 
-fun Context.isRtl(): Boolean = resources.getBoolean(R.bool.is_rtl)
-
 private fun TextView.absoluteGravity() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) Gravity.getAbsoluteGravity(gravity, layoutDirection) else gravity
 
 @SuppressLint("RtlHardcoded")
 internal fun TextView.isGravityRight(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.RIGHT
 
 internal fun TextView.isGravityCenter(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.CENTER_HORIZONTAL
+
+fun Context.isRtl(): Boolean = resources.getBoolean(R.bool.is_rtl)

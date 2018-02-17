@@ -20,7 +20,7 @@ public class TextInputViewInstrumentedJavaTest {
     public void testInitialization() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         EditText editText = new EditText(context);
-        TextInputView textInputView = new TextInputView(context, editText);
+        TextInputView textInputView = new TextInputView(editText);
         Assert.assertNotNull(textInputView);
     }
 }
