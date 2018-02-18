@@ -82,14 +82,6 @@ internal fun TextView.isGravityRight(): Boolean = absoluteGravity() and Gravity.
 
 internal fun TextView.isGravityCenter(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.CENTER_HORIZONTAL
 
-internal fun TextView.compoundDrawableOffset(defaultPadding: Int): Int {
-    val alignEnd = isGravityRight()
-    val compoundIndex = if (alignEnd) 0 else 2
-    val compoundPadding = when {
-        compoundDrawablePadding > 0 -> compoundDrawablePadding
-        !alignEnd -> defaultPadding
-        else -> 0
-    }
-    val compoundDrawable = compoundDrawables[compoundIndex]
-    return compoundDrawable?.let { it.intrinsicWidth + compoundPadding } ?: 0
-}
+fun TextView.startOffset(): Int = compoundDrawables[0]?.let { it.intrinsicWidth + compoundDrawablePadding } ?: 0
+
+fun TextView.endOffset(): Int = compoundDrawables[2]?.let { it.intrinsicWidth + compoundDrawablePadding } ?: 0

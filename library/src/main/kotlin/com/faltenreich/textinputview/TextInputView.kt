@@ -23,7 +23,12 @@ private const val ANIMATION_DURATION = 200L
 private const val HINT_PADDING = 8F
 
 @Suppress("MemberVisibilityCanBePrivate")
-open class TextInputView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, editText: EditText? = null) : FrameLayout(context, attrs, defStyleAttr) {
+open class TextInputView @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+        editText: EditText? = null
+) : FrameLayout(context, attrs, defStyleAttr) {
 
     constructor(editText: EditText) : this(editText.context, null, 0, editText)
 
@@ -51,9 +56,6 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
         addView(hintView)
         hintView
     }
-
-    private var maxLineWidth: Int = 0
-        get() = editText.width - hintView.width - editText.compoundDrawableOffset(hintPadding.toInt())
 
     private val hintPadding by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, HINT_PADDING, resources.displayMetrics) }
 
@@ -116,30 +118,35 @@ open class TextInputView @JvmOverloads constructor(context: Context, attrs: Attr
         val textColor = if (hasFocus) textColorSelected else textColorNormal
         hintView.setTextColor(textColor, ANIMATION_DURATION, AccelerateDecelerateInterpolator())
 
+        // TODO: Simplify
         val offset: Float
         val overlaps: Boolean
         val shrink: Boolean
 
         when {
-            editText.isGravityCenter() -> {
-                offset =
-                        if (isEmpty) { if (hasFocus) maxLineWidth.toFloat() else (editText.width.toFloat() - hintView.width) / 2 }
-                        else { Math.max(maxLineWidth.toFloat(), (editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2 + hintPadding) }
-                overlaps = offset > maxLineWidth
-                shrink = offset < hintView.translationX
-            }
             editText.isGravityRight() -> {
+                val maxOffset = editText.startOffset().toFloat()
                 offset =
-                        if (isEmpty) { if (hasFocus) 0F else (editText.width - hintView.width).toFloat() }
-                        else { Math.min(0F, editText.width - editText.getTextWidth(editText.lineCount - 1) - hintView.width - hintPadding) }
-                overlaps = offset < 0
+                        if (isEmpty && !hasFocus) (editText.width - hintView.width - editText.endOffset()).toFloat()
+                        else Math.min(maxOffset, editText.width - hintView.width - hintPadding - editText.getTextWidth(editText.lineCount - 1) - editText.endOffset())
+                overlaps = offset < maxOffset
                 shrink = offset > hintView.translationX
             }
-            else -> {
+            editText.isGravityCenter() -> {
+                val minOffset = (editText.width - hintView.width - editText.endOffset()).toFloat()
                 offset =
-                        if (isEmpty) { if (hasFocus) maxLineWidth.toFloat() else 0F }
-                        else { Math.max(maxLineWidth.toFloat(), editText.getTextWidth(editText.lineCount - 1) + hintPadding) }
-                overlaps = offset > maxLineWidth
+                        if (isEmpty && !hasFocus) (editText.width - hintView.width).toFloat() / 2
+                        // FIXME: Subtracting hintPadding seems off
+                        else Math.max(minOffset, ((editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding)
+                overlaps = offset > minOffset
+                shrink = offset < hintView.translationX
+            }
+            else -> {
+                val minOffset = (editText.width - hintView.width - editText.endOffset()).toFloat()
+                offset =
+                        if (isEmpty && !hasFocus) editText.startOffset().toFloat()
+                        else Math.max(minOffset, editText.startOffset() + editText.getTextWidth(editText.lineCount - 1) + hintPadding)
+                overlaps = offset > minOffset
                 shrink = offset < hintView.translationX
             }
         }
