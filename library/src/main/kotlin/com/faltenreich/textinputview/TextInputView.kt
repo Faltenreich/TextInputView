@@ -22,6 +22,12 @@ const val OVERLAP_ACTION_TOGGLE = 1
 private const val ANIMATION_DURATION = 200L
 private const val HINT_PADDING = 8F
 
+private enum class Alignment {
+    LEFT,
+    CENTER,
+    RIGHT
+}
+
 @Suppress("MemberVisibilityCanBePrivate")
 open class TextInputView @JvmOverloads constructor(
         context: Context,
@@ -118,40 +124,33 @@ open class TextInputView @JvmOverloads constructor(
         val textColor = if (hasFocus) textColorSelected else textColorNormal
         hintView.setTextColor(textColor, ANIMATION_DURATION, AccelerateDecelerateInterpolator())
 
-        // TODO: Simplify
-        val offset: Float
-        val overlaps: Boolean
-        val shrink: Boolean
+        val isIdle = isEmpty && !hasFocus
 
-        when {
-            editText.isGravityRight() -> {
-                val maxOffset = editText.startOffset().toFloat()
-                offset =
-                        if (isEmpty && !hasFocus) (editText.width - hintView.width - editText.endOffset()).toFloat()
-                        else Math.min(maxOffset, editText.width - hintView.width - hintPadding - editText.getTextWidth(editText.lineCount - 1) - editText.endOffset())
-                overlaps = offset < maxOffset
-                shrink = offset > hintView.translationX
-            }
-            editText.isGravityCenter() -> {
-                val minOffset = (editText.width - hintView.width - editText.endOffset()).toFloat()
-                offset =
-                        if (isEmpty && !hasFocus) (editText.width - hintView.width).toFloat() / 2
-                        // FIXME: Subtracting hintPadding seems off
-                        else Math.max(minOffset, ((editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding)
-                overlaps = offset > minOffset
-                shrink = offset < hintView.translationX
-            }
-            else -> {
-                val minOffset = (editText.width - hintView.width - editText.endOffset()).toFloat()
-                offset =
-                        if (isEmpty && !hasFocus) editText.startOffset().toFloat()
-                        else Math.max(minOffset, editText.startOffset() + editText.getTextWidth(editText.lineCount - 1) + hintPadding)
-                overlaps = offset > minOffset
-                shrink = offset < hintView.translationX
-            }
+        val alignmentIdle = when {
+            editText.isGravityRight() -> Alignment.RIGHT
+            editText.isGravityCenter() -> Alignment.CENTER
+            else -> Alignment.LEFT
         }
+        val alignmentActive = if (alignmentIdle == Alignment.RIGHT) Alignment.LEFT else Alignment.RIGHT
 
-        val realOffset = if (isRtl) -offset else offset
+        val offsetThreshold = (if (alignmentActive == Alignment.LEFT) editText.startOffset() else editText.width - hintView.width - editText.endOffset()).toFloat()
+        val offsetIdle = when (alignmentIdle) {
+            Alignment.RIGHT -> (editText.width - hintView.width - editText.endOffset()).toFloat()
+            Alignment.CENTER -> (editText.width - hintView.width).toFloat() / 2
+            Alignment.LEFT -> editText.startOffset().toFloat()
+        }
+        val offsetActive = when(alignmentIdle) {
+            Alignment.RIGHT -> editText.width - hintView.width - hintPadding - editText.getTextWidth(editText.lineCount - 1) - editText.endOffset()
+            Alignment.CENTER -> ((editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding
+            Alignment.LEFT -> editText.startOffset() + editText.getTextWidth(editText.lineCount - 1) + hintPadding
+        }
+        val offsetActiveCapped = if (alignmentActive == Alignment.LEFT) Math.min(offsetThreshold, offsetActive) else Math.max(offsetThreshold, offsetActive)
+
+        val offset = if (isIdle) offsetIdle else offsetActiveCapped
+        val overlaps = if (alignmentActive == Alignment.LEFT) offset < offsetThreshold else offset > offsetThreshold
+        val shrink = if (alignmentActive == Alignment.LEFT) offset > hintView.translationX else offset < hintView.translationX
+
+        val offsetLocalized = if (isRtl) -offset else offset
         val visibility =
                 when (overlapAction) {
                     OVERLAP_ACTION_TOGGLE -> if (overlaps) View.GONE else View.VISIBLE
@@ -159,7 +158,7 @@ open class TextInputView @JvmOverloads constructor(
                         val animate = shouldAnimate && (isEmpty || shrink)
                         val duration = if (animate) ANIMATION_DURATION else 0
                         hintView.clearAnimation()
-                        hintView.animate().translationX(realOffset).setDuration(duration).start()
+                        hintView.animate().translationX(offsetLocalized).setDuration(duration).start()
                         View.VISIBLE
                     }
                     else -> View.VISIBLE
