@@ -133,16 +133,19 @@ open class TextInputView @JvmOverloads constructor(
         }
         val alignmentActive = if (alignmentIdle == Alignment.RIGHT) Alignment.LEFT else Alignment.RIGHT
 
-        val offsetThreshold = (if (alignmentActive == Alignment.LEFT) editText.startOffset() else editText.width - hintView.width - editText.endOffset()).toFloat()
+        val offsetStart = (if (isRtl) editText.endOffset() else editText.startOffset()).toFloat()
+        val offsetRight = (if (isRtl) editText.startOffset() else editText.endOffset()).toFloat()
+
+        val offsetThreshold = if (alignmentActive == Alignment.LEFT) offsetStart else editText.width - hintView.width - offsetRight
         val offsetIdle = when (alignmentIdle) {
-            Alignment.RIGHT -> (editText.width - hintView.width - editText.endOffset()).toFloat()
+            Alignment.RIGHT -> editText.width - hintView.width - offsetRight
             Alignment.CENTER -> (editText.width - hintView.width).toFloat() / 2
-            Alignment.LEFT -> editText.startOffset().toFloat()
+            Alignment.LEFT -> offsetStart
         }
         val offsetActive = when(alignmentIdle) {
-            Alignment.RIGHT -> editText.width - hintView.width - hintPadding - editText.getTextWidth(editText.lineCount - 1) - editText.endOffset()
+            Alignment.RIGHT -> editText.width - hintView.width - hintPadding - editText.getTextWidth(editText.lineCount - 1) - offsetRight
             Alignment.CENTER -> ((editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding
-            Alignment.LEFT -> editText.startOffset() + editText.getTextWidth(editText.lineCount - 1) + hintPadding
+            Alignment.LEFT -> offsetStart + editText.getTextWidth(editText.lineCount - 1) + hintPadding
         }
         val offsetActiveCapped = if (alignmentActive == Alignment.LEFT) Math.min(offsetThreshold, offsetActive) else Math.max(offsetThreshold, offsetActive)
 
