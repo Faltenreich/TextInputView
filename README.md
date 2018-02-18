@@ -78,10 +78,24 @@ overlapAction | enum | Applied when the input of the embedded EditText overlaps 
 
 ### FAQ
 
+**Why this library?**
+
+I adore the Material Design Guidelines. For me they are an incredible source of wisdom for non-designers.
+No longer do I have to spent dozens of hours for the fine details of my user interfaces.
+Now I have more time to do the thing I love the most: developing sourcecode that keeps everything together.
+
+The InputTextLayout is one of the many fine Material Design Components.
+It helps users navigating a form by providing a permanent hint.
+One particular problem with the InputTextLayout is the additional screen space it preserves for positioning its hint.
+Not only does this lead to vertically larger user interfaces, 
+but the preserved space stays completely empty until a user input has been given - and is therefor temporarily useless.
+
 **How does the TextInputView work?**
 
-The TextInput wraps a given EditText and replaces its hint with a TextView 
-that is being repositioned as the user focuses the EditText or changes its text (similar to how the TextInputLayout works).
+The TextInputLayout wraps a given EditText and replaces its hint with a TextView that stays within the bounds of the original view.
+Therefor it does not preserve additional screen space and stays there as long as it fits into the original EditText alongside the user input - 
+otherwise it will be pushed to the side (or optionally be hidden immediately).
+The latter should rarely occur as the user input of most forms stays relatively short.
 
 **What about gravity?**
 
