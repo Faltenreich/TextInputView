@@ -1,5 +1,7 @@
 # TextInputView
 
+[ ![Download](https://api.bintray.com/packages/faltenreich/maven/TextInputView/images/download.svg) ](https://bintray.com/faltenreich/maven/TextInputView/_latestVersion)
+
 *A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
 
 <img src="https://github.com/Faltenreich/TextInputView/blob/develop/preview.gif" width="200">
