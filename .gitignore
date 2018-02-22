@@ -62,3 +62,4 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 *.kt___jb_tmp___
+textinputview/keystore.gradle
