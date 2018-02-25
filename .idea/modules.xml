@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TextInputView.iml" filepath="$PROJECT_DIR$/TextInputView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/app.iml" filepath="$PROJECT_DIR$/example/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/textinputview/library.iml" filepath="$PROJECT_DIR$/textinputview/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example/example.iml" filepath="$PROJECT_DIR$/example/example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/textinputview/textinputview.iml" filepath="$PROJECT_DIR$/textinputview/textinputview.iml" />
     </modules>
   </component>
 </project>
