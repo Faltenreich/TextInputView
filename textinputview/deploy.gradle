@@ -4,7 +4,7 @@ apply from: 'keystore.gradle'
 ext {
     groupId = 'com.faltenreich'
     artifactId = "textinputview"
-    libVersion = "1.0.0"
+    libVersion = project_version
 }
 version = libVersion
 group = groupId

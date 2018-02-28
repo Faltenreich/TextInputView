@@ -9,8 +9,8 @@ android {
         applicationId "com.faltenreich.textinputview"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0.0"
+        versionCode project_version_code
+        versionName project_version
     }
 
     buildTypes {
@@ -31,5 +31,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$support_version"
-    implementation project(':textinputview')
+    implementation "com.faltenreich:textinputview:$project_version"
 }
