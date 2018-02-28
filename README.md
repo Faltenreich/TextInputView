@@ -1,6 +1,6 @@
 # TextInputView
 
-[ ![Download](https://api.bintray.com/packages/faltenreich/maven/TextInputView/images/download.svg) ](https://bintray.com/faltenreich/maven/TextInputView/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/faltenreich/maven/TextInputView/images/download.svg) ](https://bintray.com/faltenreich/maven/TextInputView/_latestVersion) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)
 
 *A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
 
