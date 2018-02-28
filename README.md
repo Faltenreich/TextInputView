@@ -4,14 +4,18 @@
 
 *A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
 
-<img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview.gif" width="200">
+<img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview.gif" width="300">
 
 Instead of preserving extra space for repositioning its hint, the TextInputView will place it into the embedded EditText.
 The Material Design Guidelines are being respected by adapting primary- and accent colors as well as the style of the target hint.
 
 ## Preview
 
-<img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview_unfocused.png" width="200"><img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview_focused.png" width="200"><img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview_overlap.png" width="200">
+<img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview_unfocused.png" width="200">
+
+<img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview_focused.png" width="200">
+
+<img src="https://github.com/Faltenreich/TextInputView/blob/develop/images/preview_overlap.png" width="200">
 
 ## Features
 - **More space for you:** Reduce the extra space for a permanent hint to an absolute minimum
@@ -26,7 +30,7 @@ The Material Design Guidelines are being respected by adapting primary- and acce
 ##### Gradle
 ```gradle
 dependencies {
-    implementation 'com.github.Faltenreich:TextInputView:1.0.0'
+    implementation 'com.faltenreich:textinputview:1.0.0'
 }
 ```
 
