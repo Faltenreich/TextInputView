@@ -1,11 +1,13 @@
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply from: 'keystore.gradle'
+
 ext {
     groupId = 'com.faltenreich'
     artifactId = "textinputview"
     libVersion = project_version
 }
+
 version = libVersion
 group = groupId
 
