@@ -14,10 +14,6 @@ import android.view.animation.Interpolator
 import android.widget.EditText
 import android.widget.TextView
 
-/**
- * Created by Faltenreich on 22.01.2018
- */
-
 internal fun Any.tag(): String = javaClass.simpleName
 
 internal fun ViewGroup.views(): List<View> = (0 until childCount).map { getChildAt(it) }
@@ -77,10 +73,14 @@ private fun EditText.getTextForLine(line: Int): String? =
 
 private fun TextView.absoluteGravity() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) Gravity.getAbsoluteGravity(gravity, layoutDirection) else gravity
 
-@SuppressLint("RtlHardcoded")
-internal fun TextView.isGravityRight(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.RIGHT
+fun TextView.horizontalGravity(): Int = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK
 
-internal fun TextView.isGravityCenter(): Boolean = absoluteGravity() and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.CENTER_HORIZONTAL
+fun TextView.verticalGravity(): Int = absoluteGravity() and Gravity.VERTICAL_GRAVITY_MASK
+
+@SuppressLint("RtlHardcoded")
+internal fun TextView.isGravityRight(): Boolean = horizontalGravity() == Gravity.RIGHT
+
+internal fun TextView.isGravityCenter(): Boolean = horizontalGravity() == Gravity.CENTER_HORIZONTAL
 
 fun TextView.startOffset(): Int = compoundDrawables[0]?.let { it.intrinsicWidth + compoundDrawablePadding } ?: 0
 

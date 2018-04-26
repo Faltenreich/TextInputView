@@ -52,7 +52,7 @@ open class TextInputView @JvmOverloads constructor(
 
     private val hintView: TextView by lazy {
         val hintView = TextView(context)
-        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, this.editText.verticalGravity())
         hintView.layoutParams = layoutParams
 
         // Replace the original hint of the wrapped EditText
