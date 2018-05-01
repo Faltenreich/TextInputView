@@ -29,6 +29,11 @@ android {
         androidTest.java.srcDirs += 'src/androidTest/java'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 dokka {
