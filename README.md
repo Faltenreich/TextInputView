@@ -30,7 +30,7 @@ The Material Design Guidelines are being respected by adapting primary- and acce
 ##### Gradle
 ```gradle
 dependencies {
-    implementation 'com.faltenreich:textinputview:1.0.1'
+    implementation 'com.faltenreich:textinputview:1.0.2'
 }
 ```
 
