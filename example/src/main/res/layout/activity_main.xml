@@ -15,14 +15,22 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:hint="@string/app_name"/>
 
     </com.faltenreich.textinputview.TextInputView>
 
-    <EditText
+    <com.faltenreich.textinputview.TextInputView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/app_name"/>
+        android:textColor="@android:color/black"
+        android:tint="#1e88e5">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:hint="@string/app_name"/>
+
+    </com.faltenreich.textinputview.TextInputView>
 
 </LinearLayout>

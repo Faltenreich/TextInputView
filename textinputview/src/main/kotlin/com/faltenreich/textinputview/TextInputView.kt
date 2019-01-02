@@ -36,7 +36,7 @@ open class TextInputView @JvmOverloads constructor(
     private val hintPadding by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, HINT_PADDING, resources.displayMetrics) }
 
     /**
-     * Applied when the input of the embedded EditText overlaps the hint
+     * Action when the embedded EditText overlaps the hint (one of: {@link OVERLAP_ACTION_TOGGLE}, {@link OVERLAP_ACTION_PUSH})
      */
     var overlapAction: Int = -1
         set(value) {
@@ -46,7 +46,7 @@ open class TextInputView @JvmOverloads constructor(
         }
 
     /**
-     * Text size of the hint
+     * Text size of the hint (in px)
      */
     var textSize: Float = -1f
         set(value) {
@@ -56,7 +56,7 @@ open class TextInputView @JvmOverloads constructor(
         }
 
     /**
-     * Applied when the embedded EditText loses focus
+     * Text color of the unfocused EditText (in @ColorInt)
      */
     var textColorNormal: Int = -1
         set(value) {
@@ -66,7 +66,7 @@ open class TextInputView @JvmOverloads constructor(
         }
 
     /**
-     * Applied when the embedded EditText gets focused
+     * Text color of the focused EditText (in @ColorInt)
      */
     var textColorSelected: Int = -1
         set(value) {
