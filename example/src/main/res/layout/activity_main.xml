@@ -15,11 +15,14 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:maxLines="1"
-            android:ellipsize="end"
+            android:gravity="end"
             android:hint="@string/app_name"/>
 
     </com.faltenreich.textinputview.TextInputView>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/app_name"/>
 
 </LinearLayout>

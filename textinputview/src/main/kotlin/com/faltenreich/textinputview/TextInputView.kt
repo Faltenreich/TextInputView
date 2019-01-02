@@ -13,18 +13,6 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 
-const val OVERLAP_ACTION_PUSH = 0
-const val OVERLAP_ACTION_TOGGLE = 1
-
-private const val ANIMATION_DURATION = 200L
-private const val HINT_PADDING = 8F
-
-private enum class Alignment {
-    LEFT,
-    CENTER,
-    RIGHT
-}
-
 @Suppress("MemberVisibilityCanBePrivate")
 open class TextInputView @JvmOverloads constructor(
         context: Context,
@@ -43,48 +31,65 @@ open class TextInputView @JvmOverloads constructor(
     private var customTextColorNormal: Int? = null
     private var customTextColorSelected: Int? = null
 
-    private val editText: EditText by lazy {
-        try { views().first { it is EditText } as EditText }
-        catch (exception: NoSuchElementException) { throw Exception("${tag()} requires an EditText as first child") } }
-
-    private val hintView: TextView by lazy {
-        val hintView = TextView(context)
-        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, this.editText.verticalGravity())
-        hintView.layoutParams = layoutParams
-
-        // Replace the original hint of the wrapped EditText
-        hintView.setPadding(this.editText.paddingLeft, this.editText.paddingTop, this.editText.paddingRight, this.editText.paddingBottom)
-        hintView.text = this.editText.hint
-        this.editText.hint = null
-
-        addView(hintView)
-        hintView
-    }
-
+    private lateinit var editText: EditText
+    private lateinit var hintView: TextView
     private val hintPadding by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, HINT_PADDING, resources.displayMetrics) }
 
+    /**
+     * Applied when the input of the embedded EditText overlaps the hint
+     */
     var overlapAction: Int = -1
-
-    var textSize: Float
-        get() = hintView.textSize
-        set(value) {
-            hintView.setTextSize(TypedValue.COMPLEX_UNIT_PX, value)
-            invalidateHint(false)
-        }
-
-    var textColorNormal: Int = -1
         set(value) {
             field = value
+            customOverlapAction = value
             invalidateHint()
         }
 
+    /**
+     * Text size of the hint
+     */
+    var textSize: Float = -1f
+        set(value) {
+            field = value
+            customTextSize = value
+            invalidateHint()
+        }
+
+    /**
+     * Applied when the embedded EditText loses focus
+     */
+    var textColorNormal: Int = -1
+        set(value) {
+            field = value
+            customTextColorNormal = value
+            invalidateHint()
+        }
+
+    /**
+     * Applied when the embedded EditText gets focused
+     */
     var textColorSelected: Int = -1
         set(value) {
             field = value
+            customTextColorSelected = value
             invalidateHint()
         }
 
     init {
+        initCustomAttributes(attrs)
+        editText?.apply { addView(this) }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (!isInEditMode) {
+            initEditText()
+            initHint()
+            initAttributes()
+        }
+    }
+
+    private fun initCustomAttributes(attrs: AttributeSet?) {
         attrs?.apply {
             val typedArray = context.obtainStyledAttributes(this, R.styleable.TextInputView, 0, 0)
             customOverlapAction = typedArray.getInt(R.styleable.TextInputView_overlapAction, -1).takeIf { it >= 0 }
@@ -93,13 +98,6 @@ open class TextInputView @JvmOverloads constructor(
             customTextColorSelected = typedArray.getColorStateList(R.styleable.TextInputView_android_tint)?.defaultColor
             typedArray.recycle()
         }
-        editText?.apply { addView(this) }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        initAttributes()
-        initLayout()
     }
 
     private fun initAttributes() {
@@ -109,19 +107,31 @@ open class TextInputView @JvmOverloads constructor(
         textColorSelected = customTextColorSelected ?: context.accentColor()
     }
 
-    private fun initLayout() {
-        if (!isInEditMode) {
-            editText.onFocusChangeListener = OnFocusChangeListener { _, _ -> invalidateHint() }
-            editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
-                override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) { invalidateHint() }
-                override fun afterTextChanged(editable: Editable?) {}
-            })
-            editText.setOnGlobalLayoutChangeListener {
-                isInitialized = true
-                invalidateHint(false)
-            }
+    private fun initEditText() {
+        editText = try { views().first { it is EditText } as EditText } catch (exception: NoSuchElementException) { throw Exception("${tag()} requires an EditText as first child") }
+        editText.onFocusChangeListener = OnFocusChangeListener { _, _ -> invalidateHint() }
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) { invalidateHint() }
+            override fun afterTextChanged(editable: Editable?) {}
+        })
+        editText.setOnGlobalLayoutChangeListener {
+            isInitialized = true
+            invalidateHint(false)
         }
+    }
+
+    private fun initHint() {
+        hintView = TextView(context)
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, editText.verticalGravity())
+        hintView.layoutParams = layoutParams
+
+        // Replace the original hint of the wrapped EditText
+        hintView.setPadding(editText.paddingLeft, editText.paddingTop, editText.paddingRight, editText.paddingBottom)
+        hintView.text = editText.hint
+        editText.hint = null
+
+        addView(hintView)
     }
 
     private fun invalidateHint(shouldAnimate: Boolean = true) {
@@ -131,37 +141,42 @@ open class TextInputView @JvmOverloads constructor(
 
             val textColor = if (hasFocus) textColorSelected else textColorNormal
             hintView.setTextColor(textColor, ANIMATION_DURATION, AccelerateDecelerateInterpolator())
+            hintView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
+            hintView.measure(0, 0)
 
             val alignmentIdle = when {
-                editText.isGravityRight() -> Alignment.RIGHT
-                editText.isGravityCenter() -> Alignment.CENTER
-                else -> Alignment.LEFT
+                editText.isGravityRight() -> ALIGNMENT_END
+                editText.isGravityCenter() -> ALIGNMENT_CENTER
+                else -> ALIGNMENT_START
             }
-            val alignmentActive = if (alignmentIdle == Alignment.RIGHT) Alignment.LEFT else Alignment.RIGHT
+            val alignmentActive = if (alignmentIdle == ALIGNMENT_END) ALIGNMENT_START else ALIGNMENT_END
+
+            val editTextWidth = editText.width
+            val hintWidth = hintView.measuredWidth
 
             val offsetStart = (if (isRtl) editText.endOffset() else editText.startOffset()).toFloat()
             val offsetRight = (if (isRtl) editText.startOffset() else editText.endOffset()).toFloat()
-            val offsetThreshold = if (alignmentActive == Alignment.LEFT) offsetStart else editText.width - hintView.width - offsetRight
+            val offsetThreshold = if (alignmentActive == ALIGNMENT_START) offsetStart else editTextWidth - hintWidth - offsetRight
 
             val offset =
                     if (isEmpty && !hasFocus) {
                         when (alignmentIdle) {
-                            Alignment.RIGHT -> editText.width - hintView.width - offsetRight
-                            Alignment.CENTER -> (editText.width - hintView.width).toFloat() / 2
-                            Alignment.LEFT -> offsetStart
+                            ALIGNMENT_END -> editTextWidth - hintWidth - offsetRight
+                            ALIGNMENT_CENTER -> (editTextWidth - hintWidth).toFloat() / 2
+                            else -> offsetStart
                         }
                     } else {
                         val offsetActive = when (alignmentIdle) {
-                            Alignment.RIGHT -> editText.width - hintView.width - hintPadding - editText.getTextWidth(editText.lineCount - 1) - offsetRight
-                            Alignment.CENTER -> ((editText.width + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding
-                            Alignment.LEFT -> offsetStart + editText.getTextWidth(editText.lineCount - 1) + hintPadding
+                            ALIGNMENT_END -> editTextWidth - hintWidth - hintPadding - editText.getTextWidth(editText.lineCount - 1) - offsetRight
+                            ALIGNMENT_CENTER -> ((editTextWidth + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding
+                            else -> offsetStart + editText.getTextWidth(editText.lineCount - 1) + hintPadding
                         }
-                        if (alignmentActive == Alignment.LEFT) Math.min(offsetThreshold, offsetActive)
+                        if (alignmentActive == ALIGNMENT_START) Math.min(offsetThreshold, offsetActive)
                         else Math.max(offsetThreshold, offsetActive)
                     }
 
-            val overlaps = if (alignmentActive == Alignment.LEFT) offset < offsetThreshold else offset > offsetThreshold
-            val shrink = if (alignmentActive == Alignment.LEFT) offset > hintView.translationX else offset < hintView.translationX
+            val overlaps = if (alignmentActive == ALIGNMENT_START) offset < offsetThreshold else offset > offsetThreshold
+            val shrink = if (alignmentActive == ALIGNMENT_START) offset > hintView.translationX else offset < hintView.translationX
 
             val offsetLocalized = if (isRtl) -offset else offset
             val visibility =
@@ -178,5 +193,17 @@ open class TextInputView @JvmOverloads constructor(
                     }
             hintView.visibility = if (editText.lineCount > 1) View.GONE else visibility
         }
+    }
+
+    companion object {
+        const val OVERLAP_ACTION_PUSH = 0
+        const val OVERLAP_ACTION_TOGGLE = 1
+
+        private const val ALIGNMENT_START = 0
+        private const val ALIGNMENT_CENTER = 1
+        private const val ALIGNMENT_END = 2
+
+        private const val ANIMATION_DURATION = 200L
+        private const val HINT_PADDING = 8F
     }
 }
