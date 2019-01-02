@@ -1,6 +1,7 @@
 package com.faltenreich.textinputview
 
 import android.content.Context
+import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -11,10 +12,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
-
-/**
- * Created by Faltenreich on 21.01.2018
- */
 
 const val OVERLAP_ACTION_PUSH = 0
 const val OVERLAP_ACTION_TOGGLE = 1
@@ -41,10 +38,10 @@ open class TextInputView @JvmOverloads constructor(
     private val isRtl: Boolean by lazy { context.isRtl() }
     private var isInitialized = false
 
-    private var customOverlapAction: Int = -1
-    private var customTextSize: Float = -1f
-    private var customTextColorNormal: Int = -1
-    private var customTextColorSelected: Int = -1
+    private var customOverlapAction: Int? = null
+    private var customTextSize: Float? = null
+    private var customTextColorNormal: Int? = null
+    private var customTextColorSelected: Int? = null
 
     private val editText: EditText by lazy {
         try { views().first { it is EditText } as EditText }
@@ -71,7 +68,7 @@ open class TextInputView @JvmOverloads constructor(
     var textSize: Float
         get() = hintView.textSize
         set(value) {
-            hintView.setTextSize(TypedValue.COMPLEX_UNIT_PX, editText.textSize)
+            hintView.setTextSize(TypedValue.COMPLEX_UNIT_PX, value)
             invalidateHint(false)
         }
 
@@ -88,28 +85,31 @@ open class TextInputView @JvmOverloads constructor(
         }
 
     init {
-        attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.TextInputView, 0, 0)
-            customOverlapAction = typedArray.getInt(R.styleable.TextInputView_overlapAction, -1)
-            customTextSize = typedArray.getFloat(R.styleable.TextInputView_android_textSize, -1f)
-            customTextColorNormal = typedArray.getColorStateList(R.styleable.TextInputView_android_textColor)?.defaultColor ?: -1
-            customTextColorSelected = typedArray.getColorStateList(R.styleable.TextInputView_android_tint)?.defaultColor ?: -1
+        attrs?.apply {
+            val typedArray = context.obtainStyledAttributes(this, R.styleable.TextInputView, 0, 0)
+            customOverlapAction = typedArray.getInt(R.styleable.TextInputView_overlapAction, -1).takeIf { it >= 0 }
+            customTextSize = typedArray.getFloat(R.styleable.TextInputView_android_textSize, -1f).takeIf { it >= 0 }
+            customTextColorNormal = typedArray.getColorStateList(R.styleable.TextInputView_android_textColor)?.defaultColor
+            customTextColorSelected = typedArray.getColorStateList(R.styleable.TextInputView_android_tint)?.defaultColor
             typedArray.recycle()
         }
-        editText?.let { addView(it) }
+        editText?.apply { addView(this) }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        initAttributes()
         initLayout()
     }
 
-    private fun initLayout() {
-        overlapAction = if (customOverlapAction >= 0) customOverlapAction else OVERLAP_ACTION_PUSH
-        textSize = if (customTextSize >= 0) customTextSize else editText.textSize
-        textColorNormal = if (customTextColorNormal >= 0) customTextColorNormal else editText.hintTextColors.defaultColor
-        textColorSelected = if (customTextColorSelected >= 0) customTextColorSelected else context.accentColor()
+    private fun initAttributes() {
+        overlapAction = customOverlapAction ?: OVERLAP_ACTION_PUSH
+        textSize = customTextSize ?: editText.textSize
+        textColorNormal = customTextColorNormal ?: editText.hintTextColors.defaultColor
+        textColorSelected = customTextColorSelected ?: context.accentColor()
+    }
 
+    private fun initLayout() {
         if (!isInEditMode) {
             editText.onFocusChangeListener = OnFocusChangeListener { _, _ -> invalidateHint() }
             editText.addTextChangedListener(object : TextWatcher {
