@@ -32,9 +32,6 @@ android {
 
 dependencies {
     implementation project(':textinputview')
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
-    
     implementation 'com.google.android.material:material:1.4.0'
 }

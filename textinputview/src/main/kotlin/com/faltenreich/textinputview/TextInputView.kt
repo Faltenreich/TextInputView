@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.faltenreich.textinputview
 
 import android.content.Context
@@ -11,8 +13,9 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
+import kotlin.math.max
+import kotlin.math.min
 
-@Suppress("MemberVisibilityCanBePrivate")
 open class TextInputView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -209,8 +212,8 @@ open class TextInputView @JvmOverloads constructor(
                         ALIGNMENT_CENTER -> ((editTextWidth + editText.getTextWidth(editText.lineCount - 1)) / 2) - hintPadding
                         else -> offsetStart + editText.getTextWidth(editText.lineCount - 1) + hintPadding
                     }
-                    if (alignmentActive == ALIGNMENT_START) Math.min(offsetThreshold, offsetActive)
-                    else Math.max(offsetThreshold, offsetActive)
+                    if (alignmentActive == ALIGNMENT_START) min(offsetThreshold, offsetActive)
+                    else max(offsetThreshold, offsetActive)
                 }
 
             val overlaps =
@@ -237,14 +240,16 @@ open class TextInputView @JvmOverloads constructor(
     }
 
     companion object {
-        const val OVERLAP_ACTION_PUSH = 0
-        const val OVERLAP_ACTION_TOGGLE = 1
+
+        private const val OVERLAP_ACTION_PUSH = 0
+        private const val OVERLAP_ACTION_TOGGLE = 1
 
         private const val ALIGNMENT_START = 0
         private const val ALIGNMENT_CENTER = 1
         private const val ALIGNMENT_END = 2
 
         private const val ANIMATION_DURATION = 200L
+
         private const val HINT_PADDING = 8F
     }
 }
