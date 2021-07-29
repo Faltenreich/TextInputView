@@ -1,5 +1,6 @@
 # TextInputView
 
+[![MavenCentral](https://maven-badges.herokuapp.com/maven-central/com.faltenreich/textinputview/badge.svg?style=flat)](https://mvnrepository.com/artifact/com.faltenreich/textinputview)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-TextInputView-green.svg?style=flat)](https://android-arsenal.com/details/1/6981)
 
 *A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
@@ -122,6 +123,14 @@ including its compoundDrawablePadding.
 
 Right-to-left input is supported throughout using the Android resource system (res/values-ldrtl).
 The calculations are flipped in order to respect the inverted alignments.
+
+### Third-party licenses
+
+This software uses following technologies with great appreciation:
+
+* [AndroidX](https://developer.android.com/jetpack/androidx)
+* [gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin)
+* [Material Components for Android](https://material.io/components)
 
 ### License
 
