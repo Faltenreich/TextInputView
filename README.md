@@ -30,6 +30,12 @@ The Material Design Guidelines are being respected by adapting primary- and acce
 
 ##### Gradle
 ```gradle
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+```gradle
 dependencies {
     implementation 'com.faltenreich:textinputview:<version>'
 }
@@ -53,12 +59,14 @@ dependencies {
 ##### Java
 ```java
 public class MainActivity extends AppCompatActivity {
+
+    public MainActivity {
+        super(R.layout.activity_main);
+    }
     
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        
         TextInputView textInputView = new TextInputView(editText);
     }
 }
@@ -67,12 +75,10 @@ public class MainActivity extends AppCompatActivity {
 
 ##### Kotlin
 ```kotlin
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        
         val textInputView = TextInputView(editText)
     }
 }
