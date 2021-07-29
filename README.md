@@ -1,6 +1,6 @@
 # TextInputView
 
-[ ![Download](https://api.bintray.com/packages/faltenreich/maven/TextInputView/images/download.svg) ](https://bintray.com/faltenreich/maven/TextInputView/_latestVersion) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-TextInputView-green.svg?style=flat )](https://android-arsenal.com/details/1/6981)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-TextInputView-green.svg?style=flat)](https://android-arsenal.com/details/1/6981)
 
 *A different approach to the [TextInputLayout](https://developer.android.com/reference/android/support/design/widget/TextInputLayout.html)*
 
@@ -30,7 +30,7 @@ The Material Design Guidelines are being respected by adapting primary- and acce
 ##### Gradle
 ```gradle
 dependencies {
-    implementation 'com.faltenreich:textinputview:1.0.2'
+    implementation 'com.faltenreich:textinputview:<version>'
 }
 ```
 
@@ -125,7 +125,7 @@ The calculations are flipped in order to respect the inverted alignments.
 
 ### License
 
-Copyright 2018 Philipp Fahlteich
+Copyright 2021 Philipp Fahlteich
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

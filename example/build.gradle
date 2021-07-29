@@ -3,42 +3,38 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.faltenreich.textinputview"
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 30
         versionCode projectVersionCode
         versionName projectVersion
     }
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
+    androidExtensions {
+        experimental = true
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    packagingOptions {
-        exclude 'META-INF/main.kotlin_module'
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':textinputview')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
-    implementation "com.android.support:appcompat-v7:$supportVersion"
-    implementation project(':textinputview')
+    
+    implementation 'com.google.android.material:material:1.4.0'
 }

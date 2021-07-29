@@ -4,9 +4,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
 
     <com.faltenreich.textinputview.TextInputView
         android:layout_width="match_parent"
@@ -15,7 +15,9 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/app_name"/>
+            android:autofillHints="@null"
+            android:hint="@string/app_name"
+            android:inputType="text" />
 
     </com.faltenreich.textinputview.TextInputView>
 
@@ -28,8 +30,10 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@null"
             android:gravity="end"
-            android:hint="@string/app_name"/>
+            android:hint="@string/app_name"
+            android:inputType="text" />
 
     </com.faltenreich.textinputview.TextInputView>
 

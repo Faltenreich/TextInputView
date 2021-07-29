@@ -1,29 +1,28 @@
 buildscript {
-    ext.projectVersion = '1.0.2'
-    ext.projectVersionCode = 3
-    ext.kotlinVersion = '1.3.11'
-    ext.supportVersion = '27.1.1'
-    ext.dokkaVersion = '0.9.15'
 
-    repositories {
-        google()
-        jcenter()
+    ext {
+        projectVersion = '1.0.3'
+        projectVersionCode = 4
+        kotlinVersion = '1.5.10'
+
+        repos = {
+            google()
+            jcenter()
+        }
     }
 
+    repositories repos
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath 'org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.16'
     }
 }
 
 allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
+    repositories repos
 }
 
 task clean(type: Delete) {

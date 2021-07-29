@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TextInputView.iml" filepath="$PROJECT_DIR$/TextInputView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/example.iml" filepath="$PROJECT_DIR$/example/example.iml" />
-      <module fileurl="file://$PROJECT_DIR$/textinputview/textinputview.iml" filepath="$PROJECT_DIR$/textinputview/textinputview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/textinputview.iml" filepath="$PROJECT_DIR$/.idea/modules/textinputview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/example/textinputview.example.iml" filepath="$PROJECT_DIR$/.idea/modules/example/textinputview.example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/textinputview/textinputview.textinputview.iml" filepath="$PROJECT_DIR$/.idea/modules/textinputview/textinputview.textinputview.iml" />
     </modules>
   </component>
 </project>
